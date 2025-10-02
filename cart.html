@@ -35,7 +35,7 @@
   <main class="cart-page">
     <section class="order-info">
       <h2>Оформление заказа</h2>
-      <form class="order-form">
+      <form class="order-form" action="https://httpbin.org/post" method="POST" enctype="multipart/form-data">
         <div class="form-row">
           <label for="name">Имя *</label>
           <input type="text" id="name" name="name" required>
