@@ -424,7 +424,6 @@ main {
 
 /* корзина */
 .cart-link {
-  position: absolute;
   top: 15px;
   right: 30px;
 }
@@ -507,4 +506,24 @@ main {
     font-weight: bold;
     margin-right: 10px;
   }
+}
+
+.header-actions {
+  position: absolute;
+  top: 15px;
+  right: 30px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.header-actions .cart-link,
+.header-actions .user-link {
+  position: static;
+}
+
+.user-icon {
+  width: 75px;
+  height: 75px;
+  border-radius: 50%;
 }
