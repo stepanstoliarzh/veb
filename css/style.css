@@ -223,12 +223,12 @@ footer a:hover {
 
 /* Страница входа */
 .auth {
-    height: 100vh;
-     background: url("images/back.png") center/cover no-repeat;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0;
+  height: 100vh;
+  background: url("../images/back.png") center/cover no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
 }
 
 .auth-form {
