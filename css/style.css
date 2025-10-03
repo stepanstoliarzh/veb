@@ -527,3 +527,19 @@ main {
   height: 75px;
   border-radius: 50%;
 }
+
+.filters {
+  margin-bottom: 10px;
+}
+.filters button {
+  background: #f1eee9;
+  border: 1px solid #ccc;
+  padding: 5px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-right: 5px;
+}
+.filters button.active {
+  background: #1d5a21;
+  color: #fff;
+}

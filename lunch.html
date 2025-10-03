@@ -74,6 +74,14 @@
             <h2><span class="badge">Шаг 3</span> Напитки</h2>
             <div id="grid-drink" class="dishes-grid"></div>
           </section>
+          <section>
+            <h2><span class="badge">Шаг 4</span> Салаты</h2>
+            <div id="grid-salad" class="dishes-grid"></div>
+          </section>
+          <section>
+            <h2><span class="badge">Шаг 5</span> Десерты</h2>
+            <div id="grid-dessert" class="dishes-grid"></div>
+            </section>
         </div>
 
         <aside class="order-box">
@@ -89,6 +97,14 @@
           <div class="ob-section">
             <div class="ob-title">Напитки</div>
             <ul data-list="drink"></ul>
+          </div>
+          <div class="ob-section">
+            <div class="ob-title">Салаты</div>
+            <ul data-list="salad"></ul>
+          </div>
+          <div class="ob-section">
+            <div class="ob-title">Десерты</div>
+            <ul data-list="dessert"></ul>
           </div>
           <div class="ob-total">Итого: <span data-bsum>0₽</span></div>
           <button class="btn-primary" data-badd>Добавить в корзину</button>
@@ -108,17 +124,57 @@
       </div>
 
       <section>
-        <h2>Супы</h2>
-        <div id="free-soup" class="dishes-grid"></div>
-      </section>
-      <section>
-        <h2>Главные блюда</h2>
-        <div id="free-main" class="dishes-grid"></div>
-      </section>
-      <section>
-        <h2>Напитки</h2>
-        <div id="free-drink" class="dishes-grid"></div>
-      </section>
+  <h2>Супы</h2>
+  <div class="filters">
+    <button data-kind="fish">Рыбный</button>
+    <button data-kind="meat">Мясной</button>
+    <button data-kind="veg">Вегетарианский</button>
+  </div>
+  <div id="free-soup" class="dishes-grid"></div>
+</section>
+
+<section>
+  <h2>Главные блюда</h2>
+  <div class="filters">
+    <button data-kind="fish">Рыбные</button>
+    <button data-kind="meat">Мясные</button>
+    <button data-kind="veg">Вегетарианские</button>
+  </div>
+  <div id="free-main" class="dishes-grid"></div>
+</section>
+
+<section>
+  <h2>Напитки</h2>
+  <div class="filters">
+    <button data-kind="cold">Холодные</button>
+    <button data-kind="hot">Горячие</button>
+  </div>
+  <div id="free-drink" class="dishes-grid"></div>
+</section>
+
+<section>
+  <h2>Салаты</h2>
+  <div class="filters">
+    <button data-kind="fish">Рыбные</button>
+    <button data-kind="meat">Мясные</button>
+    <button data-kind="veg">Вегетарианские</button>
+  </div>
+  <div id="free-salad" class="dishes-grid"></div>
+</section>
+
+<section>
+  <h2>Десерты</h2>
+  <div class="filters">
+    <button data-kind="small">Маленькая порция</button>
+    <button data-kind="medium">Средняя порция</button>
+    <button data-kind="large">Большая порция</button>
+  </div>
+  <div id="free-dessert" class="dishes-grid"></div>
+</section>
+
+    <section>
+      <h2>Детское меню</h2>
+      <div id="free-kids" class="dishes-grid"></div>
     </section>
   </main>
 
