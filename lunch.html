@@ -48,69 +48,71 @@
     </section>
 
     <!-- БИЗНЕС-ЛАНЧ -->
-    <section id="business" class="hidden">
-      <div class="mode-top">
-        <button class="back-btn" data-back>← Назад</button>
-        <div class="counter">
-          <span class="label">Количество бизнес-ланчей:</span>
-          <button type="button" class="cnt-btn" data-bminus>−</button>
-          <span class="cnt-val" data-bcount>0</span>
-          <button type="button" class="cnt-btn" data-bplus>+</button>
-          <span class="hint-inline">макс. 10</span>
-        </div>
-      </div>
+<section id="business" class="hidden">
+  <div class="mode-top">
+    <button class="back-btn" data-back>← Назад</button>
+    <div class="counter">
+      <span class="label">Количество бизнес-ланчей:</span>
+      <button type="button" class="cnt-btn" data-bminus>−</button>
+      <span class="cnt-val" data-bcount>0</span>
+      <button type="button" class="cnt-btn" data-bplus>+</button>
+      <span class="hint-inline">макс. 10</span>
+    </div>
+  </div>
 
-      <div class="layout">
-        <div class="layout-main">
-          <section>
-            <h2><span class="badge">Шаг 1</span> Супы</h2>
-            <div id="grid-soup" class="dishes-grid"></div>
-          </section>
-          <section>
-            <h2><span class="badge">Шаг 2</span> Главные блюда</h2>
-            <div id="grid-main" class="dishes-grid"></div>
-          </section>
-          <section>
-            <h2><span class="badge">Шаг 3</span> Напитки</h2>
-            <div id="grid-drink" class="dishes-grid"></div>
-          </section>
-          <section>
-            <h2><span class="badge">Шаг 4</span> Салаты</h2>
-            <div id="grid-salad" class="dishes-grid"></div>
-          </section>
-          <section>
-            <h2><span class="badge">Шаг 5</span> Десерты</h2>
-            <div id="grid-dessert" class="dishes-grid"></div>
-            </section>
-        </div>
+  <div class="layout">
+    <!-- ВАЖНО: id="steps" -->
+    <div id="steps" class="layout-main">
+      <section>
+        <h2><span class="badge">Шаг 1</span> Супы</h2>
+        <div id="grid-soup" class="dishes-grid"></div>
+      </section>
+      <section>
+        <h2><span class="badge">Шаг 2</span> Главные блюда</h2>
+        <div id="grid-main" class="dishes-grid"></div>
+      </section>
+      <section>
+        <h2><span class="badge">Шаг 3</span> Напитки</h2>
+        <div id="grid-drink" class="dishes-grid"></div>
+      </section>
+      <section>
+        <h2><span class="badge">Шаг 4</span> Салаты</h2>
+        <div id="grid-salad" class="dishes-grid"></div>
+      </section>
+      <section>
+        <h2><span class="badge">Шаг 5</span> Десерты</h2>
+        <div id="grid-dessert" class="dishes-grid"></div>
+      </section>
+    </div>
 
-        <aside class="order-box">
-          <h3>Ваш выбор</h3>
-          <div class="ob-section">
-            <div class="ob-title">Супы</div>
-            <ul data-list="soup"></ul>
-          </div>
-          <div class="ob-section">
-            <div class="ob-title">Главные блюда</div>
-            <ul data-list="main"></ul>
-          </div>
-          <div class="ob-section">
-            <div class="ob-title">Напитки</div>
-            <ul data-list="drink"></ul>
-          </div>
-          <div class="ob-section">
-            <div class="ob-title">Салаты</div>
-            <ul data-list="salad"></ul>
-          </div>
-          <div class="ob-section">
-            <div class="ob-title">Десерты</div>
-            <ul data-list="dessert"></ul>
-          </div>
-          <div class="ob-total">Итого: <span data-bsum>0₽</span></div>
-          <button class="btn-primary" data-badd>Добавить в корзину</button>
-        </aside>
+    <!-- ВАЖНО: id="order-box" -->
+    <aside id="order-box" class="order-box">
+      <h3>Ваш выбор</h3>
+      <div class="ob-section">
+        <div class="ob-title">Супы</div>
+        <ul data-list="soup"></ul>
       </div>
-    </section>
+      <div class="ob-section">
+        <div class="ob-title">Главные блюда</div>
+        <ul data-list="main"></ul>
+      </div>
+      <div class="ob-section">
+        <div class="ob-title">Напитки</div>
+        <ul data-list="drink"></ul>
+      </div>
+      <div class="ob-section">
+        <div class="ob-title">Салаты</div>
+        <ul data-list="salad"></ul>
+      </div>
+      <div class="ob-section">
+        <div class="ob-title">Десерты</div>
+        <ul data-list="dessert"></ul>
+      </div>
+      <div class="ob-total">Итого: <span data-bsum>0₽</span></div>
+      <button class="btn-primary" data-badd>Добавить в корзину</button>
+    </aside>
+  </div>
+</section>
 
     <!-- СВОБОДНЫЙ РЕЖИМ -->
     <section id="free" class="hidden">

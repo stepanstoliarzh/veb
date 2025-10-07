@@ -1,6 +1,6 @@
 // js/lunch-app.js
 (() => {
-  // Если на странице нет блоков режима — выходим
+  // Если на странице нет данных — выходим
   if (!Array.isArray(window.DISHES)) return;
 
   // ===== Утилиты =====
@@ -76,7 +76,7 @@
     saveCart(cart);
   };
 
-  // Лёгкая анимация «полет к корзине»
+  // Небольшая анимация «полет к корзине»
   function flyToCart(startEl) {
     const cartLink = $('.cart-link') || $('#cart-count') || document.body;
     if (!startEl || !cartLink) return;
@@ -87,7 +87,7 @@
     const dot = document.createElement('div');
     dot.style.position = 'fixed';
     dot.style.left = rectS.left + rectS.width / 2 + 'px';
-    dot.style.top = rectS.top + rectS.height / 2 + 'px';
+    dot.style.top  = rectS.top  + rectS.height / 2 + 'px';
     dot.style.width = '18px';
     dot.style.height = '18px';
     dot.style.borderRadius = '50%';
@@ -96,11 +96,11 @@
     document.body.appendChild(dot);
 
     const dx = rectC.left - rectS.left;
-    const dy = rectC.top - rectS.top;
+    const dy = rectC.top  - rectS.top;
 
     dot.animate(
       [
-        { transform: 'translate(0,0) scale(1)', opacity: 1 },
+        { transform: 'translate(0,0) scale(1)',   opacity: 1 },
         { transform: `translate(${dx}px, ${dy}px) scale(0.3)`, opacity: 0.1 }
       ],
       { duration: 600, easing: 'ease-in-out' }
@@ -113,45 +113,50 @@
   // =====================================================================
   //                           РЕЖИМЫ СТРАНИЦЫ
   // =====================================================================
-  const modeSelect = $('#mode-select');  // селектор экранов
+  const modeSelect = $('#mode-select');  // экран выбора режима
   const business   = $('#business');
   const free       = $('#free');
 
-  // Безопасные гварды: если секций нет — тихо выходим (страница без ланча)
+  // Если режимов нет — это другая страница, выходим
   if (!modeSelect && !business && !free) return;
 
-  // Кнопки выбора режима (если присутствуют)
+  // Выбор режима
   if (modeSelect) {
-    modeSelect.addEventListener('click', (e) => {
-      const btn = e.target.closest('.mode-btn');
-      if (!btn) return;
-      const mode = btn.dataset.mode;
-      modeSelect.classList.add('hidden');
-      if (mode === 'business' && business) {
-        business.classList.remove('hidden');
-        updateVisibility();
-        renderBusiness();
-      } else if (free) {
-        free.classList.remove('hidden');
-        renderFree();
-      }
-    });
-  }
+  modeSelect.addEventListener('click', (e) => {
+    const btn = e.target.closest('.mode-btn');
+    if (!btn) return;
+    const mode = btn.dataset.mode;
+    modeSelect.classList.add('hidden');
 
-  // Кнопки «назад» (если есть)
+    if (mode === 'business' && business) {
+      business.classList.remove('hidden');
+      const steps = document.querySelector('#steps');
+      const orderBox = document.querySelector('#order-box');
+      if (steps && orderBox) {
+        steps.classList.add('hidden');
+        orderBox.classList.add('hidden');
+      }
+      updateVisibility();
+    } else if (free) {
+      free.classList.remove('hidden');
+      if (free && !business) renderFree();
+    }
+  });
+}
+
+  // Кнопки «назад»
   $$('.back-btn[data-back]').forEach(b => {
     b.addEventListener('click', () => {
       if (business) business.classList.add('hidden');
       if (free) {
         free.classList.add('hidden');
-        // Сброс счётчиков свободного режима
+        // сброс временных значений «свободного» режима
         freeTotal = 0;
         freeStage.clear();
         const cnt = $('[data-fcount]');
         if (cnt) cnt.textContent = '0';
       }
       if (modeSelect) modeSelect.classList.remove('hidden');
-      // Перерисуем сетки на чистую
       renderFree();
     });
   });
@@ -159,18 +164,7 @@
   // =====================================================================
   //                          БИЗНЕС-ЛАНЧ
   // =====================================================================
-  // Контейнеры сеток
-  const gridSoup    = $('#grid-soup');
-  const gridMain    = $('#grid-main');
-  const gridDrink   = $('#grid-drink');
-  const gridSalad   = $('#grid-salad');
-  const gridDessert = $('#grid-dessert');
-
-  // Боковая панель «Ваш выбор»
-  const steps     = business ? business.querySelector('.layout') : null;
-  const orderBox  = business ? business.querySelector('.order-box') : null;
-
-  // Состояние выбранных блюд для бизнес-ланча
+  let bCount = 0; // количество бизнес-ланчей выбирается ПОЛЬЗОВАТЕЛЕМ
   const bSelected = {
     soup: new Map(),
     main: new Map(),
@@ -179,25 +173,76 @@
     dessert: new Map()
   };
 
-  let bCount = 0; // общий счётчик выбранных позиций (для индикации)
+  const steps    = $('#steps');
+  const orderBox = $('#order-box');
 
-  // Можно ли добавить из категории (если решим ограничивать)
-  const canAdd = (/*category*/) => true; // сейчас не ограничиваем
+  if (steps && orderBox) {
+  steps.classList.add('hidden');
+  orderBox.classList.add('hidden');
+  }
 
-  // Карточка для бизнес-ланча
+  const updateVisibility = () => {
+  const steps = document.querySelector('#steps');
+  const orderBox = document.querySelector('#order-box');
+
+  if (!steps || !orderBox) return; // защита от ошибки
+
+  if (bCount > 0) {
+    steps.classList.remove('hidden');
+    orderBox.classList.remove('hidden');
+  } else {
+    steps.classList.add('hidden');
+    orderBox.classList.add('hidden');
+  }
+};
+
+  $('[data-bplus]')?.addEventListener('click', () => {
+  bCount = Math.min(10, bCount + 1);
+  const el = $('[data-bcount]');
+  if (el) el.textContent = String(bCount);
+  updateVisibility();
+  renderBusiness(); 
+});
+
+  $('[data-bminus]')?.addEventListener('click', () => {
+  bCount = Math.max(0, bCount - 1);
+  const el = $('[data-bcount]');
+  if (el) el.textContent = String(bCount);
+  updateVisibility();
+  renderBusiness();
+});
+
+  const gridSoup    = $('#grid-soup');
+  const gridMain    = $('#grid-main');
+  const gridDrink   = $('#grid-drink');
+  const gridSalad   = $('#grid-salad');
+  const gridDessert = $('#grid-dessert');
+
+  const totalCat = (cat) => [...bSelected[cat].values()].reduce((s, n) => s + n, 0);
+  const canAdd   = (cat) => bCount > 0 && totalCat(cat) < bCount;
+  const inc = (key, cat) => {
+    if (!canAdd(cat)) return;
+    bSelected[cat].set(key, (bSelected[cat].get(key) || 0) + 1);
+  };
+  const dec = (key, cat) => {
+    const m = bSelected[cat], cur = m.get(key) || 0;
+    if (cur <= 1) m.delete(key);
+    else m.set(key, cur - 1);
+  };
+
   const cardB = (d) => {
     const qty = bSelected[d.category].get(d.keyword) || 0;
     return `
-      <div class="dish ${qty>0 ? 'selected' : ''}" data-key="${d.keyword}" data-cat="${d.category}">
+      <div class="dish ${qty > 0 ? 'selected' : ''}" data-key="${d.keyword}" data-cat="${d.category}">
         <img src="${d.image}" alt="${d.name}">
         <p class="price">${d.price}₽</p>
         <p class="name">${d.name}</p>
         <p class="weight">${d.count}</p>
         <div class="actions">
-          <button class="${qty>0 ? 'btn-selected' : ''}" data-add ${!canAdd(d.category) && qty===0 ? 'disabled' : ''}>
-            ${qty>0 ? 'Выбрано' : 'Выбрать'}
+          <button class="${qty > 0 ? 'btn-selected' : ''}" data-add ${!canAdd(d.category) && qty === 0 ? 'disabled' : ''}>
+            ${qty > 0 ? 'Выбрано' : 'Выбрать'}
           </button>
-          ${qty>0 ? `
+          ${qty > 0 ? `
             <div class="qty">
               <button class="qbtn" data-act="dec">−</button>
               <span class="qval">${qty}</span>
@@ -207,73 +252,41 @@
       </div>`;
   };
 
-  function inc(key, cat) {
-    const cur = bSelected[cat].get(key) || 0;
-    bSelected[cat].set(key, cur + 1);
-    bCount++;
-    const bc = $('[data-bcount]');
-    if (bc) bc.textContent = String(bCount);
-  }
-  function dec(key, cat) {
-    const cur = bSelected[cat].get(key) || 0;
-    if (cur > 1) {
-      bSelected[cat].set(key, cur - 1);
-      bCount--;
-    } else if (cur === 1) {
-      bSelected[cat].delete(key);
-      bCount--;
-    }
-    const bc = $('[data-bcount]');
-    if (bc) bc.textContent = String(bCount);
-  }
-
-  function updateVisibility() {
-    // Можем подсвечивать шаги/кнопку «Добавить в корзину»
-    // Ничего не ломаем, просто тихо выходим, если DOM-узлов нет.
-    if (!steps || !orderBox) return;
-  }
-
   function renderBusiness() {
-    if (gridSoup)    gridSoup.innerHTML    = soups.map(cardB).join('');
-    if (gridMain)    gridMain.innerHTML    = mains.map(cardB).join('');
-    if (gridDrink)   gridDrink.innerHTML   = drinks.map(cardB).join('');
-    if (gridSalad)   gridSalad.innerHTML   = salads.map(cardB).join('');
-    if (gridDessert) gridDessert.innerHTML = desserts.map(cardB).join('');
+    if (!gridSoup) return;
 
-    [gridSoup, gridMain, gridDrink, gridSalad, gridDessert]
-      .filter(Boolean)
-      .forEach(g => {
-        g.onclick = (e) => {
-          const c = e.target.closest('.dish'); if (!c) return;
-          const key = c.dataset.key, cat = c.dataset.cat;
-          if (e.target.dataset.add !== undefined) { if (!canAdd(cat) && !bSelected[cat].has(key)) return; inc(key, cat); renderBusiness(); updateBox(); }
-          if (e.target.dataset.act === 'inc')     { inc(key, cat); renderBusiness(); updateBox(); }
-          if (e.target.dataset.act === 'dec')     { dec(key, cat); renderBusiness(); updateBox(); }
-        };
-      });
+    // В бизнес-ланче НЕТ фильтров по kind — рендерим напрямую
+    gridSoup.innerHTML    = soups.map(cardB).join('');
+    gridMain.innerHTML    = mains.map(cardB).join('');
+    gridDrink.innerHTML   = drinks.map(cardB).join('');
+    gridSalad.innerHTML   = salads.map(cardB).join('');
+    gridDessert.innerHTML = desserts.map(cardB).join('');
 
+    [gridSoup, gridMain, gridDrink, gridSalad, gridDessert].forEach(g => {
+      g.onclick = (e) => {
+        const c = e.target.closest('.dish'); if (!c) return;
+        const key = c.dataset.key, cat = c.dataset.cat;
+        if (e.target.dataset.add !== undefined) { if (bCount === 0) return; inc(key, cat); renderBusiness(); updateBox(); }
+        if (e.target.dataset.act === 'inc')     { inc(key, cat); renderBusiness(); updateBox(); }
+        if (e.target.dataset.act === 'dec')     { dec(key, cat); renderBusiness(); updateBox(); }
+      };
+    });
     updateBox();
   }
 
   function updateBox() {
-    const sumEl = $('[data-bsum]');
-    if (!orderBox || !sumEl) return;
-
     let sum = 0;
     ['soup', 'main', 'drink', 'salad', 'dessert'].forEach(cat => {
-      const ul = $(`[data-list="${cat}"]`);
-      if (!ul) return;
+      const ul = $(`[data-list="${cat}"]`); if (!ul) return;
       ul.innerHTML = '';
-
       if (!bSelected[cat].size) {
         const li = document.createElement('li');
-        li.textContent = (cat === 'drink') ? 'Напиток не выбран' : 'Не выбрано';
+        li.textContent = cat === 'drink' ? 'Напиток не выбран' : 'Не выбрано';
         li.style.color = '#a00';
         ul.appendChild(li);
       } else {
         for (const [key, qty] of bSelected[cat].entries()) {
           const dish = data.find(x => x.keyword === key);
-          if (!dish) continue;
           sum += dish.price * qty;
           const li = document.createElement('li');
           li.textContent = `${dish.name}${qty > 1 ? ' ×' + qty : ''}`;
@@ -281,47 +294,45 @@
         }
       }
     });
-
-    sumEl.textContent = `${sum}₽`;
+    const sumBox = $('[data-bsum]');
+if (sumBox) sumBox.textContent = `${sum}₽`;
   }
 
-  // Кнопка «Добавить в корзину» (бизнес-ланч)
-  const bAddBtn = $('[data-badd]');
-  if (bAddBtn) {
-    bAddBtn.addEventListener('click', () => {
-      let sum = 0;
-      const items = {
-        soup: Array.from(bSelected.soup.entries()),
-        main: Array.from(bSelected.main.entries()),
-        drink: Array.from(bSelected.drink.entries()),
-        salad: Array.from(bSelected.salad.entries()),
-        dessert: Array.from(bSelected.dessert.entries())
-      };
+  // Добавление бизнес-ланча в корзину
+  $('[data-badd]')?.addEventListener('click', () => {
+    // Суммируем позиции из выбранного набора
+    let sum = 0;
+    const items = {
+      soup:    Array.from(bSelected.soup.entries()),
+      main:    Array.from(bSelected.main.entries()),
+      drink:   Array.from(bSelected.drink.entries()),
+      salad:   Array.from(bSelected.salad.entries()),
+      dessert: Array.from(bSelected.dessert.entries())
+    };
 
-      ['soup', 'main', 'drink', 'salad', 'dessert'].forEach(cat => {
-        for (const [key, qty] of bSelected[cat].entries()) {
-          const dish = data.find(x => x.keyword === key);
-          if (!dish) continue;
-          sum += dish.price * qty;
-        }
-      });
-
-      // Добавляем только если есть минимум что-то осмысленное
-      if (items.soup.length || items.main.length || items.drink.length) {
-        addBusiness(items, sum);
-        // Сброс выбора
-        bSelected.soup.clear();
-        bSelected.main.clear();
-        bSelected.drink.clear();
-        bSelected.salad.clear();
-        bSelected.dessert.clear();
-        bCount = 0;
-        const bc = $('[data-bcount]'); if (bc) bc.textContent = '0';
-        updateVisibility();
-        renderBusiness();
+    ['soup','main','drink','salad','dessert'].forEach(cat => {
+      for (const [key, qty] of bSelected[cat].entries()) {
+        const dish = data.find(x => x.keyword === key);
+        sum += dish.price * qty;
       }
     });
-  }
+
+    // Добавляем только если набор осмысленный
+    if (items.soup.length || items.main.length || items.drink.length) {
+      addBusiness(items, sum);
+      // Полный сброс
+      bSelected.soup.clear();
+      bSelected.main.clear();
+      bSelected.drink.clear();
+      bSelected.salad.clear();
+      bSelected.dessert.clear();
+      bCount = 0;
+      const counter = $('[data-bcount]');
+      if (counter) counter.textContent = '0';
+      updateVisibility();
+      renderBusiness();
+    }
+  });
 
   // =====================================================================
   //                          СВОБОДНЫЙ РЕЖИМ
@@ -333,10 +344,10 @@
   const freeDessert = $('#free-dessert');
   const freeKids    = $('#free-kids');
 
-  let freeTotal = 0;                    // выбранные позиции до добавления в корзину (индикатор)
-  const FREE_LIMIT = 10;                // просто подсказка пользователю
-  const freeStage = new Map();          // временное количество по блюду
-  const fCountEl  = $('[data-fcount]'); // индикатор «выбрано позиций»
+  let freeTotal = 0;               // выбранные позиции (индикатор)
+  const FREE_LIMIT = 10;           // подсказка пользователю
+  const freeStage = new Map();     // временное количество для карточки
+  const fCountEl  = $('[data-fcount]');
 
   const cardF = (d) => {
     const qty = freeStage.get(d.keyword) || 1;
@@ -357,8 +368,7 @@
       </div>`;
   };
 
-  // ===== Фильтры (ЛР5) =====
-  // Храним активный фильтр для каждой категории (кроме kids)
+  // ===== Фильтры (ЛР5, только для свободного режима) =====
   const activeFilters = {
     soup: null,    // fish | meat | veg
     main: null,    // fish | meat | veg
@@ -387,19 +397,23 @@
 
     if (freeKids) freeKids.innerHTML = kids.map(cardF).join('');
 
-    // Делегирование кликов для каждой сетки
+    // Делегирование кликов для сеток
     [freeSoup, freeMain, freeDrink, freeSalad, freeDessert, freeKids]
       .filter(Boolean)
       .forEach(g => {
         g.onclick = (e) => {
           const card = e.target.closest('.dish'); if (!card) return;
-          const key = card.dataset.key;
-          const cur = freeStage.get(key) || 1;
+          const key  = card.dataset.key;
+          const cur  = freeStage.get(key) || 1;
 
           if (e.target.dataset.act === 'inc') {
-            freeStage.set(key, cur + 1);
-            renderFree();
-            return;
+          let val = cur;
+          if (val < FREE_LIMIT) {                
+          val++;
+          freeStage.set(key, val);
+          renderFree();
+          }
+          return;
           }
           if (e.target.dataset.act === 'dec') {
             freeStage.set(key, Math.max(1, cur - 1));
@@ -407,7 +421,7 @@
             return;
           }
           if (e.target.dataset.add !== undefined) {
-            // лимит чисто визуальный, чтобы был понятен счётчик
+            // чисто визуальный лимит, чтобы был понятен счётчик
             const inCart = cartCount();
             let addQty = freeStage.get(key) || 1;
             if (inCart + addQty > FREE_LIMIT) {
@@ -424,35 +438,31 @@
       });
   }
 
-  // Навешиваем обработчики на кнопки фильтров (если есть в верстке)
+  // Обработчики кнопок фильтров свободного режима
   $$('.filters').forEach(panel => {
     panel.addEventListener('click', (e) => {
       const btn = e.target.closest('button[data-kind]');
       if (!btn) return;
 
-      // Определяем категорию из id следующей сетки внутри секции
       const section = btn.closest('section');
       const grid = section && section.querySelector('.dishes-grid');
       if (!grid || !grid.id.startsWith('free-')) return;
 
-      const cat = grid.id.replace('free-', '');    // soup | main | drink | salad | dessert
-      const kind = btn.dataset.kind;               // fish/meat/veg/... по методичке
+      const cat  = grid.id.replace('free-', ''); // soup | main | drink | salad | dessert
+      const kind = btn.dataset.kind;             // fish/meat/veg/...
 
-      // Переключаем активное состояние
       if (activeFilters[cat] === kind) {
         activeFilters[cat] = null;
         btn.classList.remove('active');
       } else {
         activeFilters[cat] = kind;
-        // снимаем active со всех в панели и ставим на текущую
         $$('.filters button', panel).forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
       }
-
       renderFree();
     });
   });
 
-  // Первая отрисовка свободного режима (если открыт)
+  // Первичная отрисовка свободного режима (если секции есть на странице)
   renderFree();
 })();

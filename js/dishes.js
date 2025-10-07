@@ -12,7 +12,7 @@ window.DISHES = [
   { keyword: 'main4', name: 'Спагетти карбонара', price: 570, category: 'main', count: '300 г', image: 'lunch/main/main4.jpg', kind: 'meat' },
   { keyword: 'main5', name: 'Феттучини кон - фунги', price: 560, category: 'main', count: '300 г', image: 'lunch/main/main5.jpg', kind: 'veg' },
   { keyword: 'main6', name: 'Говядина под сырной шапкой', price: 990, category: 'main', count: '300 г', image: 'lunch/main/main6.jpg', kind: 'meat' },
-  { keyword: 'main7', name: 'Гомадари', price: 590, category: 'main', count: '220 г', image: 'lunch/main/main7.jpg', kind: 'fish' },
+  { keyword: 'main7', name: 'Гомадари', price: 590, category: 'main', count: '220 г', image: 'lunch/main/main7.jpg', kind: 'meat' },
   { keyword: 'main8', name: 'Куриный кармашек', price: 650, category: 'main', count: '230 г', image: 'lunch/main/main8.jpg', kind: 'meat' },
   { keyword: 'main9', name: 'Пельмени в горшочке', price: 570, category: 'main', count: '220 г', image: 'lunch/main/main9.jpg', kind: 'meat' },
   { keyword: 'main10', name: 'Лосось под сливочно-икорным соусом', price: 1500, category: 'main', count: '160 г', image: 'lunch/main/main10.jpg', kind: 'fish' },
@@ -41,6 +41,7 @@ window.DISHES = [
   { keyword: 'dessert1', name: 'Десерт семифредо', price: 390, category: 'dessert', count: '200 г', image: 'lunch/desert/desert1.jpg', kind: 'small' },
   { keyword: 'dessert2', name: 'Шоколадный Фондан', price: 470, category: 'dessert', count: '120 г', image: 'lunch/desert/desert2.jpg', kind: 'medium' },
   { keyword: 'dessert3', name: 'Мороженое ассорти', price: 360, category: 'dessert', count: '180 г', image: 'lunch/desert/desert3.jpg', kind: 'large' },
+  
   // ===== Детское меню =====
   { keyword: 'kids1', name: 'Супчик куриный с фрикадельками', price: 280, category: 'kids', count: '200 г', image: 'lunch/kids/kids1.jpg' },
   { keyword: 'kids2', name: 'Сосиски детские', price: 200, category: 'kids', count: '100 г', image: 'lunch/kids/kids2.jpg' },
