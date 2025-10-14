@@ -38,7 +38,11 @@
       <div class="mode-buttons">
         <button class="mode-btn" data-mode="business">
           <span class="mode-title">Бизнес-ланч</span>
-          <span class="mode-sub">Суп, главное, напиток</span>
+          <span class="mode-sub">Суп, главное, напиток, салат, десерт</span>
+        </button>
+        <button class="mode-btn" data-mode="combo">
+          <span class="mode-title">Комбо</span>
+          <span class="mode-sub">Готовые наборы</span>
         </button>
         <button class="mode-btn" data-mode="free">
           <span class="mode-title">Свободный режим</span>
@@ -180,6 +184,15 @@
     </section>
   </main>
 
+<!-- РЕЖИМ КОМБО  -->
+  <section id="combo" class="hidden">
+  <div class="mode-top">
+    <button class="back-btn" data-back>← Назад</button>
+    <h2>Комбо-наборы FreshLunch</h2>
+  </div>
+  <div class="combo-grid"></div>
+  </section>
+
   <footer id="contacts">
     <p>Телефон: <a href="tel:+74950001122">+7 (495) 000-11-22</a></p>
     <p>Email: <a href="mailto:info@freshlunch.ru">info@freshlunch.ru</a></p>
@@ -188,6 +201,16 @@
   </footer>
 
   <script src="js/dishes.js"></script>
+  <script src="js/combos.js"></script>
   <script src="js/lunch-app.js"></script>
+  
+<!-- ВСПЛЫВАЮЩЕЕ УВЕДОМЛЕНИЕ -->
+<div id="notify" class="notify-overlay hidden">
+  <div class="notify-window">
+    <p id="notify-text">Текст уведомления</p>
+    <button class="notify-btn" id="notify-btn">Окей</button>
+  </div>
+</div>
+
 </body>
 </html>

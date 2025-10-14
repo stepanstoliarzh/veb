@@ -1,5 +1,7 @@
+// js/cart.js
 document.addEventListener("DOMContentLoaded", () => {
 
+  // ======== УТИЛИТЫ ========
   function loadCart() {
     try {
       const data = JSON.parse(localStorage.getItem("cart"));
@@ -19,17 +21,15 @@ document.addEventListener("DOMContentLoaded", () => {
     let count = 0;
     for (const id in cart) {
       const item = cart[id];
-      if (item.type === "free") count += item.qty || 0;
-      else count += 1;
+      count += item.qty || 1;
     }
     document.querySelectorAll(".cart-count").forEach(el => el.textContent = count);
   }
 
+  // ======== ОТОБРАЖЕНИЕ КОРЗИНЫ ========
   function renderCart() {
     const wrap = document.getElementById("cart-items");
     const totalBox = document.getElementById("cart-total");
-
-    // если на странице нет этих элементов — выходим
     if (!wrap || !totalBox) return;
 
     const cart = loadCart();
@@ -60,10 +60,12 @@ document.addEventListener("DOMContentLoaded", () => {
       emptyBox?.classList.add("hidden");
     }
 
-    // рендер товаров
+    // ======== РЕНДЕР ТОВАРОВ ========
     let sum = 0;
     wrap.innerHTML = "";
+
     for (const [id, item] of entries) {
+      // --- Свободный режим ---
       if (item.type === "free") {
         sum += item.price * item.qty;
         wrap.innerHTML += `
@@ -82,9 +84,11 @@ document.addEventListener("DOMContentLoaded", () => {
             <button class="remove-btn" data-remove="${id}">×</button>
           </div>`;
       }
+
+      // --- Бизнес-ланч ---
       if (item.type === "business") {
         let listHtml = '<ul class="blist">';
-        ["soup","main","drink"].forEach(cat => {
+        ["soup","main","drink","salad","dessert"].forEach(cat => {
           if (Array.isArray(item.items?.[cat])) {
             item.items[cat].forEach(([key, qty]) => {
               const dish = window.DISHES?.find(d => d.keyword === key);
@@ -93,33 +97,58 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         });
         listHtml += "</ul>";
+
         sum += item.price;
         wrap.innerHTML += `
           <div class="cart-item">
             <img src="lunch/business.jpg" alt="Бизнес ланч" class="cart-item-img">
             <div class="cart-item-info">
-              <h4>Бизнес ланч</h4>
+              <h4>Бизнес-ланч</h4>
               ${listHtml}
               <div class="cart-item-price">${item.price} руб.</div>
             </div>
             <button class="remove-btn" data-remove="${id}">×</button>
           </div>`;
       }
+
+      // --- Комбо-набор ---
+      if (item.type === "combo") {
+        sum += item.price * (item.qty || 1);
+        wrap.innerHTML += `
+          <div class="cart-item">
+            <img src="${item.img}" alt="${item.name}" class="cart-item-img">
+            <div class="cart-item-info">
+              <h4>${item.name}</h4>
+              <p>Комбо-набор FreshLunch</p>
+              <div class="cart-item-controls">
+                <button class="qbtn" data-dec="${id}">−</button>
+                <span class="qval">${item.qty || 1}</span>
+                <button class="qbtn" data-inc="${id}">+</button>
+              </div>
+              <div class="cart-item-price">${item.price * (item.qty || 1)} руб.</div>
+            </div>
+            <button class="remove-btn" data-remove="${id}">×</button>
+          </div>`;
+      }
     }
+
     totalBox.textContent = "Итого: " + sum + " руб.";
   }
 
-  // обработка кнопок +, -, удалить
+  // ======== ИЗМЕНЕНИЕ КОЛИЧЕСТВА / УДАЛЕНИЕ ========
   const wrap = document.getElementById("cart-items");
   wrap?.addEventListener("click", (e) => {
     const cart = loadCart();
     if (e.target.dataset.inc) {
       const id = e.target.dataset.inc;
-      if (cart[id]) cart[id].qty++;
+      if (cart[id]) cart[id].qty = (cart[id].qty || 1) + 1;
     }
     if (e.target.dataset.dec) {
       const id = e.target.dataset.dec;
-      if (cart[id] && cart[id].qty > 1) cart[id].qty--;
+      if (cart[id]) {
+        cart[id].qty = (cart[id].qty || 1) - 1;
+        if (cart[id].qty <= 0) delete cart[id];
+      }
     }
     if (e.target.dataset.remove) {
       delete cart[e.target.dataset.remove];
@@ -128,7 +157,7 @@ document.addEventListener("DOMContentLoaded", () => {
     renderCart();
   });
 
-  // --- форма заказа ---
+  // ======== ЛОГИКА ФОРМЫ ЗАКАЗА ========
   const delivery = document.getElementById("delivery");
   const pickupAddress = document.getElementById("pickup-address");
   const deliveryAddress = document.getElementById("delivery-address");
@@ -165,8 +194,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  //всегда обновляем счетчик
+  // ======== ИНИЦИАЛИЗАЦИЯ ========
   updateCartBadge();
-  //рендерим корзину только если на странице есть блоки
   renderCart();
 });
