@@ -145,6 +145,13 @@ document.addEventListener("DOMContentLoaded", () => {
         student_id: 241353,
       };
 
+      const drinkItem = entries.find(([_, item]) =>
+    item.name.toLowerCase().includes("сок") ||
+    item.name.toLowerCase().includes("чай") ||
+    item.name.toLowerCase().includes("кофе")
+  );
+  data.drink_id = drinkItem ? 1 : 1;
+
       // простая валидация
       if (!data.full_name || !data.email || !data.phone || !data.delivery_address) {
         alert("Пожалуйста, заполните все обязательные поля.");
