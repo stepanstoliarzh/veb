@@ -1,5 +1,7 @@
 // js/cart.js
 document.addEventListener("DOMContentLoaded", () => {
+  const API_URL = "https://edu.std-900.ist.mospolytech.ru/labs/api/orders";
+  const API_KEY = "d81cdbfb-4744-4d11-aafb-1417de1e1937";
 
   // ======== УТИЛИТЫ ========
   function loadCart() {
@@ -16,6 +18,11 @@ document.addEventListener("DOMContentLoaded", () => {
     updateCartBadge();
   }
 
+  function clearCart() {
+    localStorage.removeItem("cart");
+    updateCartBadge();
+  }
+
   function updateCartBadge() {
     const cart = loadCart();
     let count = 0;
@@ -25,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
         count += Number(item.qty) || 0;
       }
     }
-    document.querySelectorAll(".cart-count").forEach(el => el.textContent = count);
+    document.querySelectorAll(".cart-count").forEach(el => (el.textContent = count));
   }
 
   // ======== ОТОБРАЖЕНИЕ КОРЗИНЫ ========
@@ -57,86 +64,35 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       totalBox.textContent = "Итого: 0 руб.";
       return;
-    } else {
-      orderInfo?.classList.remove("hidden");
-      cartBox?.classList.remove("hidden");
-      emptyBox?.classList.add("hidden");
     }
 
-    // ======== РЕНДЕР ТОВАРОВ ========
+    orderInfo?.classList.remove("hidden");
+    cartBox?.classList.remove("hidden");
+    emptyBox?.classList.add("hidden");
+
     let sum = 0;
     wrap.innerHTML = "";
 
     for (const [id, item] of entries) {
       if (!item || typeof item !== "object") continue;
+      const qty = Number(item.qty) || 1;
+      sum += item.price * qty;
 
-      // --- Свободный режим ---
-      if (item.type === "free") {
-        const qty = Number(item.qty) || 1;
-        sum += item.price * qty;
-        wrap.innerHTML += `
-          <div class="cart-item">
-            <img src="${item.img}" alt="${item.name}" class="cart-item-img">
-            <div class="cart-item-info">
-              <h4>${item.name}</h4>
-              <p>${item.desc || ""}</p>
-              <div class="cart-item-controls">
-                <button class="qbtn" data-dec="${id}">−</button>
-                <span class="qval">${qty}</span>
-                <button class="qbtn" data-inc="${id}">+</button>
-              </div>
-              <div class="cart-item-price">${item.price * qty} руб.</div>
+      wrap.innerHTML += `
+        <div class="cart-item">
+          <img src="${item.img}" alt="${item.name}" class="cart-item-img">
+          <div class="cart-item-info">
+            <h4>${item.name}</h4>
+            <p>${item.desc || ""}</p>
+            <div class="cart-item-controls">
+              <button class="qbtn" data-dec="${id}">−</button>
+              <span class="qval">${qty}</span>
+              <button class="qbtn" data-inc="${id}">+</button>
             </div>
-            <button class="remove-btn" data-remove="${id}">×</button>
-          </div>`;
-      }
-
-      // --- Бизнес-ланч ---
-      if (item.type === "business") {
-        let listHtml = '<ul class="blist">';
-        ["soup","main","drink","salad","dessert"].forEach(cat => {
-          if (Array.isArray(item.items?.[cat])) {
-            item.items[cat].forEach(([key, qty]) => {
-              const dish = window.DISHES?.find(d => d.keyword === key);
-              if (dish) listHtml += `<li>${dish.name}${qty>1?" ×"+qty:""}</li>`;
-            });
-          }
-        });
-        listHtml += "</ul>";
-
-        sum += item.price;
-        wrap.innerHTML += `
-          <div class="cart-item">
-            <img src="lunch/business.jpg" alt="Бизнес ланч" class="cart-item-img">
-            <div class="cart-item-info">
-              <h4>Бизнес-ланч</h4>
-              ${listHtml}
-              <div class="cart-item-price">${item.price} руб.</div>
-            </div>
-            <button class="remove-btn" data-remove="${id}">×</button>
-          </div>`;
-      }
-
-      // --- Комбо-набор ---
-      if (item.type === "combo") {
-        const qty = Number(item.qty) || 1;
-        sum += item.price * qty;
-        wrap.innerHTML += `
-          <div class="cart-item">
-            <img src="${item.img}" alt="${item.name}" class="cart-item-img">
-            <div class="cart-item-info">
-              <h4>${item.name}</h4>
-              <p>Комбо-набор FreshLunch</p>
-              <div class="cart-item-controls">
-                <button class="qbtn" data-dec="${id}">−</button>
-                <span class="qval">${qty}</span>
-                <button class="qbtn" data-inc="${id}">+</button>
-              </div>
-              <div class="cart-item-price">${item.price * qty} руб.</div>
-            </div>
-            <button class="remove-btn" data-remove="${id}">×</button>
-          </div>`;
-      }
+            <div class="cart-item-price">${item.price * qty} руб.</div>
+          </div>
+          <button class="remove-btn" data-remove="${id}">×</button>
+        </div>`;
     }
 
     totalBox.textContent = "Итого: " + sum + " руб.";
@@ -165,6 +121,58 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // ======== ЛОГИКА ФОРМЫ ЗАКАЗА ========
+  const form = document.getElementById("order-form");
+  if (form) {
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const cart = loadCart();
+      const entries = Object.entries(cart);
+      if (!entries.length) {
+        alert("Корзина пуста. Добавьте блюда для оформления заказа.");
+        return;
+      }
+
+      const data = {
+        full_name: form.full_name.value.trim(),
+        email: form.email.value.trim(),
+        subscribe: form.subscribe.checked ? 1 : 0,
+        phone: form.phone.value.trim(),
+        delivery_address: form.delivery_address.value.trim(),
+        delivery_type: form.delivery_type.value,
+        delivery_time: form.delivery_time?.value || null,
+        comment: form.comment?.value || "",
+        student_id: 241353,
+      };
+
+      // простая валидация
+      if (!data.full_name || !data.email || !data.phone || !data.delivery_address) {
+        alert("Пожалуйста, заполните все обязательные поля.");
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_URL}?api_key=${API_KEY}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+
+        if (!response.ok) throw new Error("Ошибка при отправке заказа.");
+
+        const result = await response.json();
+        console.log("Ответ сервера:", result);
+        alert("✅ Заказ успешно оформлен!");
+        clearCart();
+        renderCart();
+      } catch (err) {
+        console.error(err);
+        alert("❌ Не удалось оформить заказ. Попробуйте позже.");
+      }
+    });
+  }
+
+  // ======== ПРОЧЕЕ ========
   const delivery = document.getElementById("delivery");
   const pickupAddress = document.getElementById("pickup-address");
   const deliveryAddress = document.getElementById("delivery-address");
@@ -199,46 +207,6 @@ document.addEventListener("DOMContentLoaded", () => {
         timeSelect.classList.add("hidden");
       }
     });
-  });
-
-  // ======== ОТПРАВКА ЗАКАЗА В API (без валидации) ========
-  const API_BASE = 'https://edu.std-900.ist.mospolytech.ru';
-  const API_KEY  = 'd81cdbfb-4744-4d11-aafb-1417de1e1937';
-
-  document.querySelector('.order-form')?.addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    const form = e.currentTarget;
-    const payload = {
-      full_name: form.querySelector('#name')?.value?.trim() || '',
-      email: form.querySelector('#email')?.value?.trim() || '',
-      subscribe: 0,
-      phone: form.querySelector('#phone')?.value?.trim() || '',
-      delivery_address: form.querySelector('#address')?.value || 'Самовывоз',
-      delivery_type: 'now',
-      comment: form.querySelector('#comment')?.value || ''
-    };
-
-    try {
-      const res = await fetch(`${API_BASE}/labs/api/orders?api_key=${API_KEY}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-
-      const data = await res.json();
-      if (!res.ok || data.error) {
-        alert(data.error || 'Не удалось оформить заказ. Попробуйте позже.');
-        return;
-      }
-
-      localStorage.removeItem('cart');
-      updateCartBadge();
-      renderCart();
-      alert('✅ Заказ оформлен! Номер: ' + (data.id || '—'));
-    } catch (err) {
-      alert('Ошибка сети при отправке заказа.');
-    }
   });
 
   // ======== ИНИЦИАЛИЗАЦИЯ ========
