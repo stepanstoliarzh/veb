@@ -296,28 +296,13 @@ function initLunchApp() {
       .reduce((s, c) => s + items[c].length, 0);
     if (totalSelected === 0) { toast('Вы ничего не выбрали'); return; }
 
-    // Проверка только для бизнес-ланча (остальные режимы без ограничений)
-    const hasSoup = items.soup.length > 0;
-    const hasMain = items.main.length > 0;
-    const hasDrink = items.drink.length > 0;
-    const hasSalad = items.salad.length > 0;
-    const validCombos = [
-      [true,true,true,true,true],
-      [true,true,true,true,false],
-      [true,true,false,true,false],
-      [false,true,true,true,true],
-      [false,true,true,true,false]
-    ];
-    const current = [hasSoup, hasMain, hasSalad, hasDrink, items.dessert.length > 0];
-    const isValid = validCombos.some(c => c.every((v,i) => v === current[i]));
-    if (!isValid) { toast('Состав бизнес-ланча неполный'); return; }
-
-    ['soup','main','drink','salad','dessert'].forEach(cat => {
-      for (const [key, qty] of bSelected[cat].entries()) {
-        const dish = data.find(x => x.keyword === key);
-        sum += dish.price * qty;
-      }
-    });
+   // Без проверки комбо — можно добавить любой состав бизнес-ланча
+['soup','main','drink','salad','dessert'].forEach(cat => {
+  for (const [key, qty] of bSelected[cat].entries()) {
+    const dish = data.find(x => x.keyword === key);
+    sum += dish.price * qty;
+  }
+});
 
     addBusiness(items, sum);
     toast('Бизнес-ланч добавлен!');
