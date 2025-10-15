@@ -428,20 +428,6 @@ $('[data-badd]')?.addEventListener('click', () => {
   const current = [hasSoup, hasMain, hasSalad, hasDrink, hasDessert];
   const isValid = validCombos.some(c => c.every((v,i) => v === current[i]));
 
-  if (!isValid) {
-    const missing = [];
-    if (!hasSoup && (hasMain || hasSalad || hasDrink)) missing.push('суп');
-    if (!hasMain)  missing.push('главное блюдо');
-    if (!hasDrink) missing.push('напиток');
-    if (!hasSalad && (hasSoup || hasMain)) missing.push('салат');
-    showNotify(
-      missing.length
-        ? `Чтобы добавить бизнес-ланч, выберите: ${missing.join(', ')}.`
-        : 'Ваш набор не соответствует ни одному из вариантов бизнес-ланча.'
-    );
-    return;
-  }
-
   // всё ок — считаем сумму и кладём в корзину
   ['soup','main','drink','salad','dessert'].forEach(cat => {
     for (const [key, qty] of bSelected[cat].entries()) {
