@@ -1,6 +1,5 @@
 // js/lunch-app.js
-(() => {
-  // Если на странице нет данных — выходим
+function initLunchApp() {
   if (!Array.isArray(window.DISHES)) return;
 
   // ===== Утилиты =====
@@ -598,4 +597,4 @@ $('[data-badd]')?.addEventListener('click', () => {
 
   // Первичная отрисовка свободного режима (если секции есть на странице)
   renderFree();
-})();
+}
