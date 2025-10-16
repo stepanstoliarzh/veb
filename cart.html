@@ -12,7 +12,7 @@
 </head>
 <body>
   <header>
-      <div class="logo">
+  <div class="logo">
     <img src="images/logo.svg" alt="FreshLunch">
     <h1>FreshLunch</h1>
   </div>
@@ -28,25 +28,17 @@
     <a href="cart.html" class="cart-link" aria-label="Корзина">
         <img src="images/cart.svg" alt="Корзина" class="cart-icon">
         <span class="cart-count">0</span>
-      </a>
-    </div>
+    </a>
+  </div>
   </header>
 
   <main class="cart-page">
-    <!-- Раздел "Состав заказа" -->
-    <section class="order-composition">
-      <h2>Состав заказа</h2>
-      <div id="order-items"></div>
-      <div id="order-total"></div>
-    </section>
-
-    <!-- Раздел "Оформление заказа" -->
     <section class="order-info">
       <h2>Оформление заказа</h2>
-      <form class="order-form" id="order-form">
+      <form class="order-form" action="https://httpbin.org/post" method="POST" enctype="multipart/form-data">
         <div class="form-row">
-          <label for="full_name">Имя *</label>
-          <input type="text" id="full_name" name="full_name" required>
+          <label for="name">Имя *</label>
+          <input type="text" id="name" name="name" required>
         </div>
         <div class="form-row">
           <label for="phone">Телефон *</label>
@@ -80,7 +72,7 @@
           <input type="text" id="flat" name="flat" placeholder="Квартира">
         </div>
 
-         <div class="form-row">
+        <div class="form-row">
           <label for="comment">Комментарий к заказу</label>
           <textarea id="comment" name="comment"></textarea>
         </div>
@@ -123,7 +115,6 @@
     </section>
 
     <section class="cart-empty-box hidden"></section>
-    
   </main>
 
   <footer id="contacts">
