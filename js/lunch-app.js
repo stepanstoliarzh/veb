@@ -96,7 +96,7 @@ function initLunchApp() {
     price,
     // ДОБАВЛЯЕМ ПОЛЯ ДЛЯ ОТОБРАЖЕНИЯ:
     name: 'Бизнес-ланч',
-    img: 'images/business-lunch.png', 
+    img: 'images/business-lunch.jpg', 
     desc: 'Полный обед: суп, главное блюдо, напиток, салат, десерт'
   };
   
