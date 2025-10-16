@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   window.saveCart = function(cart) {
     localStorage.setItem("cart", JSON.stringify(cart));
-    window.updateCartBadge(); // Вызываем глобальную функцию
+    window.updateCartBadge(); 
   };
 
   window.updateCartBadge = function() {
@@ -27,7 +27,6 @@ document.addEventListener("DOMContentLoaded", () => {
         count += Number(item.qty) || 0;
       }
     }
-    // Обновляем ВСЕ бейджи на странице
     document.querySelectorAll(".cart-count").forEach(el => {
       el.textContent = count;
     });
@@ -38,13 +37,12 @@ document.addEventListener("DOMContentLoaded", () => {
     window.updateCartBadge();
   };
 
-  // ======== ОСТАЛЬНОЙ КОД ОСТАЕТСЯ БЕЗ ИЗМЕНЕНИЙ ========
   function renderCart() {
     const wrap = document.getElementById("cart-items");
     const totalBox = document.getElementById("cart-total");
     if (!wrap || !totalBox) return;
 
-    const cart = window.loadCart(); // Используем глобальную функцию
+    const cart = window.loadCart(); 
     const entries = Object.entries(cart);
 
     const orderInfo = document.querySelector(".order-info");
@@ -104,7 +102,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // ======== ИЗМЕНЕНИЕ КОЛИЧЕСТВА / УДАЛЕНИЕ ========
   const wrap = document.getElementById("cart-items");
   wrap?.addEventListener("click", (e) => {
-    const cart = window.loadCart(); // Используем глобальную функцию
+    const cart = window.loadCart(); 
     if (e.target.dataset.inc) {
       const id = e.target.dataset.inc;
       if (cart[id]) cart[id].qty = (cart[id].qty || 1) + 1;
@@ -119,7 +117,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (e.target.dataset.remove) {
       delete cart[e.target.dataset.remove];
     }
-    window.saveCart(cart); // Используем глобальную функцию
+    window.saveCart(cart); 
     renderCart();
   });
 
@@ -150,11 +148,11 @@ if (form) {
       full_name: document.getElementById("name").value.trim(),
       email: document.getElementById("email").value.trim(),
       phone: document.getElementById("phone").value.trim(),
-      delivery_address: getDeliveryAddress(), // функция для получения адреса
+      delivery_address: getDeliveryAddress(), 
       delivery_type: deliveryType,
       delivery_time: deliveryTime,
       comment: document.getElementById("comment")?.value || "",
-      drink_id: 1, // Обязательное поле - ставим значение по умолчанию
+      drink_id: 1, 
       student_id: 241353,
     };
 
@@ -169,14 +167,13 @@ if (form) {
       return;
     }
 
-    try {
-      console.log("Отправляемые данные:", data);
-      
-      const response = await fetch(`${API_URL}?api_key=${API_KEY}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
+     try {
+    console.log("Отправляемые данные:", data);
+    const response = await fetch(`${API_URL}?api_key=${API_KEY}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
 
       console.log("Статус ответа:", response.status);
       
@@ -255,6 +252,6 @@ function getDeliveryAddress() {
   });
 
   // ======== ИНИЦИАЛИЗАЦИЯ ========
-  window.updateCartBadge(); // Используем глобальную функцию
+  window.updateCartBadge(); 
   renderCart();
 });
