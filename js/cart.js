@@ -6,8 +6,8 @@ document.addEventListener("DOMContentLoaded", () => {
   // ======== УТИЛИТЫ ========
   function loadCart() {
     try {
-      const data = JSON.parse(localStorage.getItem("cart"));
-      return (data && typeof data === "object") ? data : {};
+      const data = JSON.parse(localStorage.getItem("cart")) || {};
+      return data;
     } catch {
       return {};
     }
@@ -26,99 +26,138 @@ document.addEventListener("DOMContentLoaded", () => {
   function updateCartBadge() {
     const cart = loadCart();
     let count = 0;
-    for (const id in cart) {
-      const item = cart[id];
-      if (item && typeof item === 'object') {
-        count += Number(item.qty) || 0;
+    for (const category in cart) {
+      if (cart[category] && Array.isArray(cart[category])) {
+        count += cart[category].length;
       }
     }
     document.querySelectorAll(".cart-count").forEach(el => (el.textContent = count));
   }
 
-  // ======== ОТОБРАЖЕНИЕ КОРЗИНЫ ========
-  function renderCart() {
-    const wrap = document.getElementById("cart-items");
-    const totalBox = document.getElementById("cart-total");
-    if (!wrap || !totalBox) return;
+  // ======== ОТОБРАЖЕНИЕ СОСТАВА ЗАКАЗА ========
+  async function renderOrderItems() {
+    const orderItemsContainer = document.getElementById("order-items");
+    const orderSummaryContainer = document.getElementById("order-summary");
+    const totalPriceContainer = document.getElementById("total-price");
+    
+    if (!orderItemsContainer || !orderSummaryContainer || !totalPriceContainer) return;
 
     const cart = loadCart();
-    const entries = Object.entries(cart);
+    let hasItems = false;
+    let totalPrice = 0;
 
-    const orderInfo = document.querySelector(".order-info");
-    const cartBox = document.querySelector(".cart-box");
-    const emptyBox = document.querySelector(".cart-empty-box");
-
-    if (!entries.length) {
-      orderInfo?.classList.add("hidden");
-      cartBox?.classList.add("hidden");
-      if (emptyBox) {
-        emptyBox.classList.remove("hidden");
-        emptyBox.innerHTML = `
-          <h2>Товары в корзине</h2>
-          <div class="cart-empty">
-            <img src="images/empty-cart.svg" alt="Пустая корзина" class="cart-empty-img">
-            <p class="cart-empty-text">Ваша корзина пуста</p>
-            <a href="lunch.html" class="cart-empty-btn">Перейти в каталог</a>
-          </div>
-        `;
+    // Проверяем, есть ли вообще блюда в корзине
+    for (const category in cart) {
+      if (cart[category] && cart[category].length > 0) {
+        hasItems = true;
+        break;
       }
-      totalBox.textContent = "Итого: 0 руб.";
+    }
+
+    if (!hasItems) {
+      orderItemsContainer.innerHTML = `
+        <div class="empty-cart-message">
+          <p>Ничего не выбрано. Чтобы добавить блюда в заказ, перейдите на страницу <a href="lunch.html">Собрать ланч</a>.</p>
+        </div>
+      `;
+      orderSummaryContainer.innerHTML = "<p>Ничего не выбрано</p>";
+      totalPriceContainer.textContent = "Итого: 0 руб.";
       return;
     }
 
-    orderInfo?.classList.remove("hidden");
-    cartBox?.classList.remove("hidden");
-    emptyBox?.classList.add("hidden");
+    // Загружаем данные о блюдах с сервера
+    try {
+      const response = await fetch(`${API_URL}/api/dishes?api_key=${API_KEY}`);
+      if (!response.ok) throw new Error("Ошибка загрузки данных о блюдах");
+      
+      const allDishes = await response.json();
+      const dishesMap = {};
+      allDishes.forEach(dish => {
+        dishesMap[dish.id] = dish;
+      });
 
-    let sum = 0;
-    wrap.innerHTML = "";
+      // Отображаем состав заказа
+      let orderItemsHTML = '';
+      let orderSummaryHTML = '<ul class="order-summary-list">';
+      
+      for (const category in cart) {
+        if (cart[category] && cart[category].length > 0) {
+          orderItemsHTML += `<h3>${getCategoryName(category)}</h3>`;
+          orderItemsHTML += '<div class="dishes-grid">';
+          
+          cart[category].forEach(dishId => {
+            const dish = dishesMap[dishId];
+            if (dish) {
+              totalPrice += dish.price || 0;
+              
+              orderItemsHTML += `
+                <div class="dish-card" data-dish-id="${dish.id}">
+                  <img src="${dish.image_url || 'images/placeholder.jpg'}" alt="${dish.name}" class="dish-img">
+                  <div class="dish-info">
+                    <h4>${dish.name}</h4>
+                    <p class="dish-desc">${dish.description || ''}</p>
+                    <div class="dish-price">${dish.price || 0} руб.</div>
+                  </div>
+                  <button class="btn-remove" onclick="removeFromCart('${category}', ${dish.id})">Удалить</button>
+                </div>
+              `;
+              
+              orderSummaryHTML += `
+                <li class="order-summary-item">
+                  <span>${dish.name}</span>
+                  <span>${dish.price || 0} руб.</span>
+                </li>
+              `;
+            }
+          });
+          
+          orderItemsHTML += '</div>';
+        } else {
+          // Если для категории ничего не выбрано
+          orderSummaryHTML += `
+            <li class="order-summary-item not-selected">
+              <span>${getCategoryName(category)}: Не выбрано</span>
+            </li>
+          `;
+        }
+      }
+      
+      orderSummaryHTML += '</ul>';
+      
+      orderItemsContainer.innerHTML = orderItemsHTML;
+      orderSummaryContainer.innerHTML = orderSummaryHTML;
+      totalPriceContainer.textContent = `Итого: ${totalPrice} руб.`;
 
-    for (const [id, item] of entries) {
-      if (!item || typeof item !== "object") continue;
-      const qty = Number(item.qty) || 1;
-      sum += item.price * qty;
-
-      wrap.innerHTML += `
-        <div class="cart-item">
-          <img src="${item.img}" alt="${item.name}" class="cart-item-img">
-          <div class="cart-item-info">
-            <h4>${item.name}</h4>
-            <p>${item.desc || ""}</p>
-            <div class="cart-item-controls">
-              <button class="qbtn" data-dec="${id}">−</button>
-              <span class="qval">${qty}</span>
-              <button class="qbtn" data-inc="${id}">+</button>
-            </div>
-            <div class="cart-item-price">${item.price * qty} руб.</div>
-          </div>
-          <button class="remove-btn" data-remove="${id}">×</button>
-        </div>`;
+    } catch (error) {
+      console.error("Ошибка при загрузке данных о блюдах:", error);
+      orderItemsContainer.innerHTML = "<p>Ошибка загрузки данных о блюдах</p>";
     }
-
-    totalBox.textContent = "Итого: " + sum + " руб.";
   }
 
-  // ======== ИЗМЕНЕНИЕ КОЛИЧЕСТВА / УДАЛЕНИЕ ========
-  const wrap = document.getElementById("cart-items");
-  wrap?.addEventListener("click", (e) => {
+  // ======== УДАЛЕНИЕ ИЗ КОРЗИНЫ ========
+  function removeFromCart(category, dishId) {
     const cart = loadCart();
-    if (e.target.dataset.inc) {
-      const id = e.target.dataset.inc;
-      if (cart[id]) cart[id].qty = (cart[id].qty || 1) + 1;
+    if (cart[category] && Array.isArray(cart[category])) {
+      cart[category] = cart[category].filter(id => id !== dishId);
+      saveCart(cart);
+      renderOrderItems();
     }
-    if (e.target.dataset.dec) {
-      const id = e.target.dataset.dec;
-      if (cart[id]) {
-        cart[id].qty = (cart[id].qty || 1) - 1;
-        if (cart[id].qty <= 0) delete cart[id];
-      }
-    }
-    if (e.target.dataset.remove) {
-      delete cart[e.target.dataset.remove];
-    }
-    saveCart(cart);
-    renderCart();
-  });
+  }
+
+  // Глобальная функция для использования в onclick
+  window.removeFromCart = removeFromCart;
+
+  // ======== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ========
+  function getCategoryName(category) {
+    const names = {
+      'soup': 'Супы',
+      'main': 'Главные блюда', 
+      'drink': 'Напитки',
+      'salad': 'Салаты',
+      'dessert': 'Десерты'
+    };
+    return names[category] || category;
+  }
 
   // ======== ЛОГИКА ФОРМЫ ЗАКАЗА ========
   const form = document.getElementById("order-form");
@@ -127,96 +166,105 @@ document.addEventListener("DOMContentLoaded", () => {
       e.preventDefault();
 
       const cart = loadCart();
-      const entries = Object.entries(cart);
-      if (!entries.length) {
+      
+      // Проверяем, что корзина не пуста
+      let hasItems = false;
+      for (const category in cart) {
+        if (cart[category] && cart[category].length > 0) {
+          hasItems = true;
+          break;
+        }
+      }
+
+      if (!hasItems) {
         alert("Корзина пуста. Добавьте блюда для оформления заказа.");
         return;
       }
 
-      const data = {
-        full_name: form.full_name.value.trim(),
-        email: form.email.value.trim(),
-        subscribe: form.subscribe.checked ? 1 : 0,
-        phone: form.phone.value.trim(),
-        delivery_address: form.delivery_address.value.trim(),
-        delivery_type: form.delivery_type.value,
-        delivery_time: form.delivery_time?.value || null,
-        comment: form.comment?.value || "",
-        student_id: 241353,
+      // Проверяем комбо (должен быть выбран хотя бы напиток)
+      if (!cart.drink || cart.drink.length === 0) {
+        alert("Для оформления заказа необходимо выбрать напиток.");
+        return;
+      }
+
+      // Собираем данные формы
+      const formData = {
+        full_name: document.getElementById('full_name').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        subscribe: document.getElementById('subscribe').checked ? 1 : 0,
+        phone: document.getElementById('phone').value.trim(),
+        delivery_address: document.getElementById('delivery_address').value.trim(),
+        delivery_type: document.getElementById('delivery_type').value,
+        comment: document.getElementById('comment').value.trim() || "",
+        student_id: 241353
       };
 
-      const drinkItem = entries.find(([_, item]) =>
-    item.name.toLowerCase().includes("сок") ||
-    item.name.toLowerCase().includes("чай") ||
-    item.name.toLowerCase().includes("кофе")
-  );
-  data.drink_id = drinkItem ? 1 : 1;
+      // Добавляем время доставки если нужно
+      if (formData.delivery_type === 'by_time') {
+        const deliveryTime = document.getElementById('delivery_time').value;
+        if (!deliveryTime) {
+          alert("Пожалуйста, укажите время доставки.");
+          return;
+        }
+        formData.delivery_time = deliveryTime;
+      }
 
-      // простая валидация
-      if (!data.full_name || !data.email || !data.phone || !data.delivery_address) {
+      // Добавляем ID блюд
+      if (cart.soup && cart.soup.length > 0) formData.soup_id = cart.soup[0];
+      if (cart.main && cart.main.length > 0) formData.main_course_id = cart.main[0];
+      if (cart.salad && cart.salad.length > 0) formData.salad_id = cart.salad[0];
+      if (cart.drink && cart.drink.length > 0) formData.drink_id = cart.drink[0];
+      if (cart.dessert && cart.dessert.length > 0) formData.dessert_id = cart.dessert[0];
+
+      // Валидация обязательных полей
+      if (!formData.full_name || !formData.email || !formData.phone || !formData.delivery_address) {
         alert("Пожалуйста, заполните все обязательные поля.");
         return;
       }
 
       try {
-        const response = await fetch(`${API_URL}?api_key=${API_KEY}`, {
+        const response = await fetch(`${API_URL}/api/orders?api_key=${API_KEY}`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
+          headers: { 
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(formData)
         });
 
-        if (!response.ok) throw new Error("Ошибка при отправке заказа.");
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || "Ошибка при отправке заказа");
+        }
 
         const result = await response.json();
-        console.log("Ответ сервера:", result);
+        console.log("Заказ успешно создан:", result);
         alert("✅ Заказ успешно оформлен!");
         clearCart();
-        renderCart();
+        renderOrderItems();
+        
+        // Очищаем форму
+        form.reset();
+        
       } catch (err) {
-        console.error(err);
-        alert("❌ Не удалось оформить заказ. Попробуйте позже.");
+        console.error("Ошибка оформления заказа:", err);
+        alert(`❌ Не удалось оформить заказ: ${err.message}`);
       }
     });
   }
 
-  // ======== ПРОЧЕЕ ========
-  const delivery = document.getElementById("delivery");
-  const pickupAddress = document.getElementById("pickup-address");
-  const deliveryAddress = document.getElementById("delivery-address");
-  const payment = document.getElementById("payment");
-  const changeRow = document.getElementById("change-row");
-  const timeRadios = document.querySelectorAll("input[name='time']");
-  const timeSelect = document.getElementById("time-select");
+  // ======== ЛОГИКА ФОРМЫ ========
+  const deliveryType = document.getElementById("delivery_type");
+  const deliveryTimeRow = document.getElementById("delivery-time-row");
 
-  delivery?.addEventListener("change", () => {
-    if (delivery.value === "pickup") {
-      pickupAddress.classList.remove("hidden");
-      deliveryAddress.classList.add("hidden");
+  deliveryType?.addEventListener("change", () => {
+    if (deliveryType.value === "by_time") {
+      deliveryTimeRow.classList.remove("hidden");
     } else {
-      pickupAddress.classList.add("hidden");
-      deliveryAddress.classList.remove("hidden");
+      deliveryTimeRow.classList.add("hidden");
     }
-  });
-
-  payment?.addEventListener("change", () => {
-    if (payment.value === "cash") {
-      changeRow.classList.remove("hidden");
-    } else {
-      changeRow.classList.add("hidden");
-    }
-  });
-
-  timeRadios.forEach(radio => {
-    radio.addEventListener("change", () => {
-      if (radio.value === "custom" && radio.checked) {
-        timeSelect.classList.remove("hidden");
-      } else {
-        timeSelect.classList.add("hidden");
-      }
-    });
   });
 
   // ======== ИНИЦИАЛИЗАЦИЯ ========
   updateCartBadge();
-  renderCart();
+  renderOrderItems();
 });
