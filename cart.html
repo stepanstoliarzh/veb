@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>FreshLunch — Оформление заказа</title>
+  <title>FreshLunch — Корзина</title>
 
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/cart.css">
@@ -12,20 +12,20 @@
 </head>
 <body>
   <header>
-    <div class="logo">
-      <img src="images/logo.svg" alt="FreshLunch">
-      <h1>FreshLunch</h1>
-    </div>
-    <nav>
-      <a href="index.html">Главная</a>
-      <a href="lunch.html">Собрать ланч</a>
-      <a href="feedback.html">Обратная связь</a>
-    </nav>
-    <div class="header-actions">
-      <a href="auth.html" class="user-link" aria-label="Вход">
-        <img src="images/user.svg" alt="Вход" class="user-icon">
-      </a>
-      <a href="cart.html" class="cart-link" aria-label="Корзина">
+      <div class="logo">
+    <img src="images/logo.svg" alt="FreshLunch">
+    <h1>FreshLunch</h1>
+  </div>
+  <nav>
+    <a href="index.html">Главная</a>
+    <a href="lunch.html">Собрать ланч</a>
+    <a href="feedback.html">Обратная связь</a>
+  </nav>
+  <div class="header-actions">
+    <a href="auth.html" class="user-link" aria-label="Вход">
+      <img src="images/user.svg" alt="Вход" class="user-icon">
+    </a>
+    <a href="cart.html" class="cart-link" aria-label="Корзина">
         <img src="images/cart.svg" alt="Корзина" class="cart-icon">
         <span class="cart-count">0</span>
       </a>
@@ -58,49 +58,72 @@
         </div>
 
         <div class="form-row">
-          <label for="subscribe">Подписка на рассылку</label>
-          <input type="checkbox" id="subscribe" name="subscribe" value="1">
-        </div>
-
-        <div class="form-row">
-          <label for="delivery_type">Тип доставки *</label>
-          <select id="delivery_type" name="delivery_type" required>
-            <option value="now">Как можно скорее</option>
-            <option value="by_time">К указанному времени</option>
+          <label for="delivery">Доставка *</label>
+          <select id="delivery" name="delivery" required>
+            <option value="pickup">Самовывоз</option>
+            <option value="delivery">Доставка</option>
           </select>
         </div>
 
-        <div class="form-row hidden" id="delivery-time-row">
-          <label for="delivery_time">Время доставки *</label>
-          <input type="time" id="delivery_time" name="delivery_time" min="07:00" max="23:00" step="300">
-          <p class="hint-inline">Доступное время доставки с 7:00 до 23:00 с шагом 5 минут</p>
+        <div class="form-row" id="pickup-address">
+          <label for="pickup">Пункт самовывоза *</label>
+          <select id="pickup" name="pickup">
+            <option value="zdravaya">Москва, ул. Здоровая, 15</option>
+          </select>
         </div>
 
-        <div class="form-row">
-          <label for="delivery_address">Адрес доставки *</label>
-          <input type="text" id="delivery_address" name="delivery_address" required>
+        <div class="form-row hidden" id="delivery-address">
+          <label for="address">Адрес доставки *</label>
+          <input type="text" id="address" name="address" placeholder="Улица, дом">
+          <input type="text" id="entrance" name="entrance" placeholder="Подъезд">
+          <input type="text" id="floor" name="floor" placeholder="Этаж">
+          <input type="text" id="flat" name="flat" placeholder="Квартира">
         </div>
 
-        <div class="form-row">
+         <div class="form-row">
           <label for="comment">Комментарий к заказу</label>
           <textarea id="comment" name="comment"></textarea>
         </div>
 
-        <!-- Отображение выбранных блюд в форме -->
         <div class="form-row">
-          <label>Состав заказа:</label>
-          <div id="order-summary">
-            <!-- Здесь будет отображаться состав заказа -->
-          </div>
+          <label for="payment">Способ оплаты *</label>
+          <select id="payment" name="payment" required>
+            <option value="card" selected>Картой при получении</option>
+            <option value="cash">Наличными</option>
+          </select>
+        </div>
+
+        <div class="form-row hidden" id="change-row">
+          <label for="change">Сдача с</label>
+          <input type="number" id="change" name="change" placeholder="Введите сумму">
         </div>
 
         <div class="form-row">
-          <div id="total-price">Итого: 0 руб.</div>
+          <label>Время доставки *</label>
+          <div>
+            <label><input type="radio" name="time" value="soon" checked> Как можно скорее</label><br>
+            <label><input type="radio" name="time" value="custom"> К указанному времени</label>
+          </div>
+        </div>
+
+        <div class="form-row hidden" id="time-select">
+          <label for="time-input">Укажите время *</label>
+          <input type="time" id="time-input" name="time-input" min="07:00" max="23:00">
+          <p class="hint-inline">Доступное время доставки с 7:00 до 23:00</p>
         </div>
 
         <button type="submit" class="btn-primary">Отправить заказ</button>
       </form>
     </section>
+
+    <section class="cart-box">
+      <h2>Товары в корзине</h2>
+      <div id="cart-items"></div>
+      <div id="cart-total"></div>
+    </section>
+
+    <section class="cart-empty-box hidden"></section>
+    
   </main>
 
   <footer id="contacts">
@@ -110,6 +133,7 @@
     <p>© 2025 FreshLunch</p>
   </footer>
 
+  <script src="js/dishes.js"></script>
   <script src="js/cart.js"></script>
 </body>
 </html>
