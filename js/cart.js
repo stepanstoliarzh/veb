@@ -125,39 +125,97 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ======== ЛОГИКА ФОРМЫ ЗАКАЗА ========
   const form = document.querySelector(".order-form");
-  if (form) {
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
+if (form) {
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-      const cart = window.loadCart(); // Используем глобальную функцию
-      const entries = Object.entries(cart);
-      if (!entries.length) {
-        alert("Корзина пуста. Добавьте блюда для оформления заказа.");
-        return;
+    const cart = loadCart();
+    const entries = Object.entries(cart);
+    if (!entries.length) {
+      alert("Корзина пуста. Добавьте блюда для оформления заказа.");
+      return;
+    }
+
+    // Определяем delivery_type и delivery_time
+    const timeRadio = document.querySelector('input[name="time"]:checked');
+    const deliveryType = timeRadio?.value === "soon" ? "now" : "by_time";
+    
+    let deliveryTime = null;
+    if (deliveryType === "by_time") {
+      deliveryTime = document.getElementById("time-input")?.value || null;
+    }
+
+    // Подготовка данных согласно API
+    const data = {
+      full_name: document.getElementById("name").value.trim(),
+      email: document.getElementById("email").value.trim(),
+      phone: document.getElementById("phone").value.trim(),
+      delivery_address: getDeliveryAddress(), // функция для получения адреса
+      delivery_type: deliveryType,
+      delivery_time: deliveryTime,
+      comment: document.getElementById("comment")?.value || "",
+      drink_id: 1, // Обязательное поле - ставим значение по умолчанию
+      student_id: 241353,
+    };
+
+    // Валидация
+    if (!data.full_name || !data.email || !data.phone || !data.delivery_address) {
+      alert("Пожалуйста, заполните все обязательные поля.");
+      return;
+    }
+
+    if (data.delivery_type === "by_time" && !data.delivery_time) {
+      alert("Пожалуйста, укажите время доставки.");
+      return;
+    }
+
+    try {
+      console.log("Отправляемые данные:", data);
+      
+      const response = await fetch(`${API_URL}?api_key=${API_KEY}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      console.log("Статус ответа:", response.status);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Ошибка сервера:", errorText);
+        throw new Error(`Ошибка ${response.status}: ${errorText}`);
       }
 
-      // ... остальной код формы без изменений ...
+      const result = await response.json();
+      console.log("Ответ сервера:", result);
+      alert("✅ Заказ успешно оформлен!");
+      clearCart();
+      renderCart();
+    } catch (err) {
+      console.error("Ошибка:", err);
+      alert("❌ Не удалось оформить заказ: " + err.message);
+    }
+  });
+}
 
-      try {
-        const response = await fetch(`${API_URL}?api_key=${API_KEY}`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
-        });
-
-        if (!response.ok) throw new Error("Ошибка при отправке заказа.");
-
-        const result = await response.json();
-        console.log("Ответ сервера:", result);
-        alert("✅ Заказ успешно оформлен!");
-        window.clearCart(); // Используем глобальную функцию
-        renderCart();
-      } catch (err) {
-        console.error(err);
-        alert("❌ Не удалось оформить заказ. Попробуйте позже.");
-      }
-    });
+// Функция для получения адреса доставки
+function getDeliveryAddress() {
+  const deliveryType = document.getElementById("delivery").value;
+  
+  if (deliveryType === "pickup") {
+    const pickupSelect = document.getElementById("pickup");
+    return pickupSelect ? pickupSelect.options[pickupSelect.selectedIndex].text : "Самовывоз";
+  } else {
+    const address = document.getElementById("address")?.value || "";
+    const entrance = document.getElementById("entrance")?.value || "";
+    const floor = document.getElementById("floor")?.value || "";
+    const flat = document.getElementById("flat")?.value || "";
+    
+    return [address, entrance, floor, flat]
+      .filter(part => part.trim() !== "")
+      .join(", ");
   }
+}
 
   // ======== ПРОЧЕЕ ========
   const delivery = document.getElementById("delivery");
