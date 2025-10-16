@@ -167,14 +167,14 @@ if (form) {
       return;
     }
 
-     try {
-    console.log("Отправляемые данные:", data);
-    const response = await fetch(`${API_URL}?api_key=${API_KEY}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
-
+      try {
+  console.log("Отправляемые данные:", data);
+  const response = await fetch(`${API_URL}/labs/api/orders?api_key=${API_KEY}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+       
       console.log("Статус ответа:", response.status);
       
       if (!response.ok) {
