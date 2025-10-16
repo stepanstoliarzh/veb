@@ -84,11 +84,24 @@ function initLunchApp() {
   };
 
   const addBusiness = (items, price) => {
-    const cart = loadCart();
-    const id = 'blanch_' + Date.now();
-    cart[id] = { type: 'business', id, items, qty: 1, price };
-    saveCart(cart);
+  const cart = loadCart();
+  const id = 'blanch_' + Date.now();
+  
+  // Создаем корректную структуру для отображения в корзине
+  cart[id] = { 
+    type: 'business', 
+    id, 
+    items, 
+    qty: 1, 
+    price,
+    // ДОБАВЛЯЕМ ПОЛЯ ДЛЯ ОТОБРАЖЕНИЯ:
+    name: 'Бизнес-ланч',
+    img: 'images/business-lunch.png', 
+    desc: 'Полный обед: суп, главное блюдо, напиток, салат, десерт'
   };
+  
+  saveCart(cart);
+};
 
   // ===== Анимация добавления =====
   function flyToCart(startEl) {
