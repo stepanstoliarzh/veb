@@ -16,24 +16,47 @@ function initLunchApp() {
   const desserts = data.filter(d => d.category === 'dessert').sort(byName);
   const kids     = data.filter(d => d.category === 'kids').sort(byName);
 
-  // ===== Корзина (localStorage) =====
-  const CART_KEY = 'cart';
+  // ===== Корзина (ИСПОЛЬЗУЕМ ГЛОБАЛЬНЫЕ ФУНКЦИИ) =====
   const loadCart = () => {
-    try { return JSON.parse(localStorage.getItem(CART_KEY)) || {}; }
+    if (typeof window.loadCart === 'function') {
+      return window.loadCart();
+    }
+    // Фолбэк на случай если глобальные функции не загружены
+    try { return JSON.parse(localStorage.getItem("cart")) || {}; }
     catch { return {}; }
   };
+
   const saveCart = (obj) => {
-    localStorage.setItem(CART_KEY, JSON.stringify(obj));
-    updateCartBadge();
+    if (typeof window.saveCart === 'function') {
+      window.saveCart(obj);
+    } else {
+      localStorage.setItem("cart", JSON.stringify(obj));
+      updateCartBadge();
+    }
   };
-  const cartCount = () => Object.values(loadCart())
-    .reduce((s, it) => s + (Number(it.qty) || 0), 0);
 
   const updateCartBadge = () => {
-    const val = cartCount();
-    const idBadge = $('#cart-count');
-    if (idBadge) idBadge.textContent = String(val);
-    $$('.cart-count').forEach(b => b.textContent = String(val));
+    if (typeof window.updateCartBadge === 'function') {
+      window.updateCartBadge();
+    } else {
+      const cart = loadCart();
+      let count = 0;
+      for (const id in cart) {
+        const item = cart[id];
+        if (item && typeof item === 'object') {
+          count += Number(item.qty) || 0;
+        }
+      }
+      document.querySelectorAll(".cart-count").forEach(el => {
+        el.textContent = count;
+      });
+    }
+  };
+
+  // Удалите старую функцию cartCount() и используйте эту:
+  const cartCount = () => {
+    const cart = loadCart();
+    return Object.values(cart).reduce((s, it) => s + (Number(it.qty) || 0), 0);
   };
 
   // ===== Добавление позиций =====
