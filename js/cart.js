@@ -1,6 +1,6 @@
 // js/cart.js
 document.addEventListener("DOMContentLoaded", () => {
-  const API_URL = "https://edu.std-900.ist.mospolytech.ru/labs/api/orders";
+  const API_URL = "https://edu.std-900.ist.mospolytech.ru";
   const API_KEY = "d81cdbfb-4744-4d11-aafb-1417de1e1937";
 
   // ======== УТИЛИТЫ ========
