@@ -1,6 +1,6 @@
 // dishes.js
 async function loadDishes() {
-  const API_URL = "https://github.com/stepanstoliarzh/veb/blob/main/dishes.json";
+  const API_URL = "https://raw.githubusercontent.com/stepanstoliarzh/veb/main/dishes.json";
   try {
     const response = await fetch(API_URL);
     if (!response.ok) throw new Error("Ошибка загрузки данных: " + response.status);
