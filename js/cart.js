@@ -253,7 +253,8 @@ const order = {
       localStorage.removeItem("cart");
       document.querySelector("#cart-items").innerHTML = "";
       document.querySelector("#cart-total").textContent = "";
-      updateCartBadge(); // корректная функция
+      updateCartBadge();
+      renderCart();
     } catch (err) {
       alert("❌ Не удалось оформить заказ, попробуйте позже.");
       console.error(err);
