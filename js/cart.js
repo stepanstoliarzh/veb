@@ -204,7 +204,7 @@ if (orderForm) {
     const orderData = Object.fromEntries(formData.entries());
 
     // Добавляем товары из корзины
-    orderData.items = Object.values(cart);
+    const cart = JSON.parse(localStorage.getItem("cart")) || {};
 
     try {
       const response = await fetch('https://68f2b214fd14a9fcc426b137.mockapi.io/api/orders', {
