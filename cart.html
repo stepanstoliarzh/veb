@@ -59,18 +59,23 @@
     </select>
   </div>
 
+  <!-- Самовывоз -->
   <div class="form-row" id="pickup-address">
-    <label for="delivery_address">Пункт самовывоза *</label>
-    <select id="delivery_address" name="delivery_address">
+    <label for="pickup_point">Пункт самовывоза *</label>
+    <select id="pickup_point" name="pickup_point">
       <option value="Москва, ул. Здоровая, 15">Москва, ул. Здоровая, 15</option>
     </select>
   </div>
 
+  <!-- Доставка -->
   <div class="form-row hidden" id="delivery-address">
     <label for="delivery_address_input">Адрес доставки *</label>
-    <input type="text" id="delivery_address_input" name="delivery_address" placeholder="Улица, дом">
+    <input type="text" id="delivery_address_input" name="delivery_address" placeholder="Улица, дом, квартира">
+    <input type="text" id="entrance" name="entrance" placeholder="Подъезд">
+    <input type="text" id="floor" name="floor" placeholder="Этаж">
   </div>
 
+  <!-- Время -->
   <div class="form-row">
     <label>Время доставки *</label>
     <div>
@@ -85,9 +90,24 @@
     <p class="hint-inline">Доступное время доставки с 7:00 до 23:00</p>
   </div>
 
+  <!-- Оплата -->
+  <div class="form-row">
+    <label for="payment">Способ оплаты *</label>
+    <select id="payment" name="payment" required>
+      <option value="card">Картой</option>
+      <option value="cash">Наличными</option>
+    </select>
+  </div>
+
+  <div class="form-row hidden" id="change-row">
+    <label for="change">Подготовить сдачу с суммы</label>
+    <input type="number" id="change" name="change" min="0" step="50">
+  </div>
+
+  <!-- Комментарий -->
   <div class="form-row">
     <label for="comment">Комментарий к заказу</label>
-    <textarea id="comment" name="comment"></textarea>
+    <textarea id="comment" name="comment" placeholder="Например: код домофона 169в"></textarea>
   </div>
 
   <button type="submit" class="btn-primary">Отправить заказ</button>
