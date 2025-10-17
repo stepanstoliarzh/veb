@@ -46,31 +46,53 @@ async function renderCart() {
     return;
   }
 
-  // Загружаем блюда (чтобы получить полные данные)
-  const response = await fetch("dishes.json");
-  const dishes = await response.json();
+  // Загружаем блюда и комбо
+  const [dishesResponse, combosResponse] = await Promise.all([
+    fetch("dishes.json").then(r => r.json()).catch(() => []),
+    fetch("combos.js")
+      .then(r => r.text())
+      .then(text => {
+        try {
+          const match = text.match(/\[\s*{[\s\S]*}\s*\]/);
+          return match ? JSON.parse(match[0]) : [];
+        } catch {
+          return [];
+        }
+      })
+      .catch(() => [])
+  ]);
+
+  const allItems = [...dishesResponse, ...combosResponse];
+  let total = 0;
 
   for (const item of items) {
-    const dish = dishes.find(d => d.id === item.id);
-    if (!dish) continue;
+    // ищем блюдо или комбо по имени или id
+    const product =
+      allItems.find(
+        d =>
+          d.id === item.id ||
+          d.name === item.name ||
+          d.title === item.name // для combo, если ключ title
+      ) || item;
 
     const itemElement = document.createElement("div");
     itemElement.classList.add("cart-item");
     itemElement.innerHTML = `
-      <img src="${dish.image}" alt="${dish.name}" class="cart-item-img">
+      <img src="${product.image || "img/placeholder.png"}" alt="${product.name || product.title}" class="cart-item-img">
       <div class="cart-item-info">
-        <h4>${dish.name}</h4>
-        <p>${dish.price} ₽</p>
-        <button class="remove-btn" data-id="${dish.id}">Удалить</button>
+        <h4>${product.name || product.title}</h4>
+        <p>${product.price} ₽ × ${item.qty || 1}</p>
+        <button class="remove-btn" data-id="${item.id}">Удалить</button>
       </div>
     `;
     cartContainer.appendChild(itemElement);
+
+    total += product.price * (item.qty || 1);
   }
 
-  // Обновляем общую сумму
-  totalElement.textContent = `${calculateTotal()} ₽`;
+  totalElement.textContent = `${total} ₽`;
 
-  // Добавляем слушатели на кнопки удаления
+  // слушатели удаления
   document.querySelectorAll(".remove-btn").forEach(btn => {
     btn.addEventListener("click", (e) => {
       const id = e.target.getAttribute("data-id");
@@ -78,6 +100,7 @@ async function renderCart() {
     });
   });
 }
+
 
 // === ПРИ ЗАГРУЗКЕ СТРАНИЦЫ ===
 document.addEventListener("DOMContentLoaded", () => {
