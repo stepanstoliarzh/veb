@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
       }
       return;
-    } else {
+      } else {
       orderInfo?.classList.remove("hidden");
       cartBox?.classList.remove("hidden");
       emptyBox?.classList.add("hidden");
@@ -69,7 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (item.type === "free") {
         sum += item.price * item.qty;
         wrap.innerHTML += `
-          <div class="cart-item">
+        <div class="cart-item">
             <img src="${item.img}" alt="${item.name}" class="cart-item-img">
             <div class="cart-item-info">
               <h4>${item.name}</h4>
@@ -134,7 +134,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     totalBox.textContent = "Итого: " + sum + " руб.";
   }
-
   // ======== ИЗМЕНЕНИЕ КОЛИЧЕСТВА / УДАЛЕНИЕ ========
   const wrap = document.getElementById("cart-items");
   wrap?.addEventListener("click", (e) => {
@@ -156,7 +155,6 @@ document.addEventListener("DOMContentLoaded", () => {
     saveCart(cart);
     renderCart();
   });
-
   // ======== ЛОГИКА ФОРМЫ ЗАКАЗА ========
   const delivery = document.getElementById("delivery");
   const pickupAddress = document.getElementById("pickup-address");

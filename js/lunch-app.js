@@ -107,7 +107,7 @@ function initLunchApp() {
   }
 
   // =====================================================================
-  //                           НОВОЕ: КОМБО
+  //                           КОМБО
   // =====================================================================
 
   // Лёгкое уведомление (для комбо)
@@ -209,7 +209,7 @@ function initLunchApp() {
         free.classList.remove('hidden');
         if (free && !business) renderFree();
       }
-    });
+      });
   }
 
   // Кнопки «назад»
@@ -256,9 +256,7 @@ function initLunchApp() {
   const updateVisibility = () => {
     const steps = document.querySelector('#steps');
     const orderBox = document.querySelector('#order-box');
-
     if (!steps || !orderBox) return; // защита от ошибки
-
     if (bCount > 0) {
       steps.classList.remove('hidden');
       orderBox.classList.remove('hidden');
@@ -275,7 +273,6 @@ function initLunchApp() {
     updateVisibility();
     renderBusiness(); 
   });
-
   $('[data-bminus]')?.addEventListener('click', () => {
     bCount = Math.max(0, bCount - 1);
     const el = $('[data-bcount]');
@@ -370,7 +367,7 @@ function initLunchApp() {
     if (sumBox) sumBox.textContent = `${sum}₽`;
   }
 
-// === КРАСИВОЕ УВЕДОМЛЕНИЕ ===
+  // === КРАСИВОЕ УВЕДОМЛЕНИЕ ===
 function showNotify(text) {
   const overlay = document.getElementById('notify');
   const msg = document.getElementById('notify-text');
@@ -597,4 +594,4 @@ $('[data-badd]')?.addEventListener('click', () => {
 
   // Первичная отрисовка свободного режима (если секции есть на странице)
   renderFree();
-}
+  }
