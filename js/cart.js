@@ -161,7 +161,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const deliveryAddress = document.getElementById("delivery-address");
   const payment = document.getElementById("payment");
   const changeRow = document.getElementById("change-row");
-  const timeRadios = document.querySelectorAll("input[name='time']");
+  const timeRadios = document.querySelectorAll("input[name='delivery_time']");
   const timeSelect = document.getElementById("time-select");
 
   delivery?.addEventListener("change", () => {
