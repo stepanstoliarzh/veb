@@ -217,25 +217,28 @@ if (orderForm) {
     });
 
     // Формируем заказ для отправки
-    const order = {
-      full_name: data.full_name || "Без имени",
-      email: data.email || "",
-      phone: data.phone || "",
-      delivery_type: data.delivery_type || "pickup",
-      delivery_address: data.delivery_address || data.pickup_point || "",
-      delivery_time: data.delivery_time_input || data.delivery_time || "soon",
-      payment: data.payment || "",
-      comment: data.comment || "",
-      items: entries.map(([id, item]) => ({
-        id,
-        name: item.name,
-        price: item.price,
-        qty: item.qty || 1,
-        type: item.type
-      })),
-      total,
-      created_at: new Date().toISOString()
-    };
+const order = {
+  full_name: data.full_name || "Без имени",
+  email: data.email || "",
+  phone: data.phone || "",
+  delivery_type: data.delivery_type || "pickup",
+  delivery_address: data.delivery_address || data.pickup_point || "",
+  entrance: data.entrance || "",
+  floor: data.floor || "",
+  delivery_time: data.delivery_time_input || data.delivery_time || "soon",
+  payment: data.payment || "",
+  change: data.change || 0,
+  comment: data.comment || "",
+  items: entries.map(([id, item]) => ({
+    id,
+    name: item.name,
+    price: item.price,
+    qty: item.qty || 1,
+    type: item.type
+  })),
+  total,
+  created_at: new Date().toISOString()
+};
 
     try {
       const response = await fetch("https://68f2b214fd14a9fcc426b137.mockapi.io/api/orders", {
