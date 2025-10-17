@@ -156,7 +156,7 @@ document.addEventListener("DOMContentLoaded", () => {
     renderCart();
   });
   // ======== ЛОГИКА ФОРМЫ ЗАКАЗА ========
-  const delivery = document.getElementById("delivery");
+  const delivery = document.getElementById("delivery_type");
   const pickupAddress = document.getElementById("pickup-address");
   const deliveryAddress = document.getElementById("delivery-address");
   const payment = document.getElementById("payment");
