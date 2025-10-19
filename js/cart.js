@@ -156,12 +156,12 @@ document.addEventListener("DOMContentLoaded", () => {
     renderCart();
   });
   // ======== ЛОГИКА ФОРМЫ ЗАКАЗА ========
-  const delivery = document.getElementById("delivery");
+  const delivery = document.getElementById("delivery_type");
   const pickupAddress = document.getElementById("pickup-address");
   const deliveryAddress = document.getElementById("delivery-address");
   const payment = document.getElementById("payment");
   const changeRow = document.getElementById("change-row");
-  const timeRadios = document.querySelectorAll("input[name='time']");
+  const timeRadios = document.querySelectorAll("input[name='delivery_time']");
   const timeSelect = document.getElementById("time-select");
 
   delivery?.addEventListener("change", () => {
@@ -192,40 +192,76 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // ======== ОТПРАВКА ЗАКАЗА НА MOCKAPI ========
 
-// === Отправка заказа ===
+// ======== ОТПРАВКА ЗАКАЗА ========
 const orderForm = document.querySelector('.order-form');
 if (orderForm) {
   orderForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    const formData = new FormData(orderForm);
-    const orderData = Object.fromEntries(formData.entries());
+    const cart = loadCart();
+    const entries = Object.entries(cart);
+    if (!entries.length) {
+      alert("❌ Ваша корзина пуста. Добавьте блюда перед оформлением заказа.");
+      return;
+    }
 
-    // Добавляем товары из корзины
-    orderData.items = Object.values(cart);
+    // Собираем данные формы
+    const formData = new FormData(orderForm);
+    const data = Object.fromEntries(formData.entries());
+
+    // Считаем общую сумму
+    let total = 0;
+    entries.forEach(([id, item]) => {
+      total += item.price * (item.qty || 1);
+    });
+
+    // Формируем заказ для отправки
+const order = {
+  full_name: data.full_name || "Без имени",
+  email: data.email || "",
+  phone: data.phone || "",
+  delivery_type: data.delivery_type || "pickup",
+  delivery_address: data.delivery_address || data.pickup_point || "",
+  entrance: data.entrance || "",
+  floor: data.floor || "",
+  delivery_time: data.delivery_time_input || data.delivery_time || "soon",
+  payment: data.payment || "",
+  change: data.change || 0,
+  comment: data.comment || "",
+  items: entries.map(([id, item]) => ({
+    id,
+    name: item.name,
+    price: item.price,
+    qty: item.qty || 1,
+    type: item.type
+  })),
+  total,
+  created_at: new Date().toISOString()
+};
 
     try {
-      const response = await fetch('https://68f2b214fd14a9fcc426b137.mockapi.io/api/orders', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(orderData)
+      const response = await fetch("https://68f2b214fd14a9fcc426b137.mockapi.io/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(order)
       });
 
-      if (!response.ok) throw new Error('Ошибка при отправке');
+      if (!response.ok) throw new Error("Ошибка при отправке");
 
-      alert('✅ Заказ успешно оформлен!');
-      localStorage.removeItem('cart');
-      document.querySelector('#cart-items').innerHTML = '';
-      document.querySelector('#cart-total').textContent = '';
-      updateCartCount(); // обновляем счетчик корзины
+      alert("✅ Заказ успешно оформлен!");
+      localStorage.removeItem("cart");
+      document.querySelector("#cart-items").innerHTML = "";
+      document.querySelector("#cart-total").textContent = "";
+      updateCartBadge();
+      renderCart();
     } catch (err) {
-      alert('❌ Не удалось оформить заказ, попробуйте позже.');
+      alert("❌ Не удалось оформить заказ, попробуйте позже.");
       console.error(err);
     }
   });
 }
+
 
   // ======== ИНИЦИАЛИЗАЦИЯ ========
   updateCartBadge();
