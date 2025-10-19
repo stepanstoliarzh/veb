@@ -54,6 +54,71 @@
     </div>
   </main>
 
+  <!-- Модальное окно просмотра -->
+<div id="viewModal" class="modal hidden">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal('viewModal')">&times;</span>
+    <h3>Просмотр заказа</h3>
+
+    <div id="orderDetails" class="kv"></div>
+
+    <div class="modal-actions">
+      <button onclick="closeModal('viewModal')" class="btn">Ок</button>
+    </div>
+  </div>
+</div>
+
+
+  <!-- Модальное окно редактирования -->
+  <div id="editModal" class="modal hidden">
+  <div class="modal-content wide">
+    <span class="close" onclick="closeModal('editModal')">&times;</span>
+    <h3 class="modal-title">Редактирование заказа</h3>
+    <form id="editForm" class="edit-grid">
+      <div class="field">
+        <label>Имя получателя</label>
+        <input type="text" id="editName" required>
+      </div>
+      <div class="field">
+        <label>Email</label>
+        <input type="email" id="editEmail">
+      </div>
+      <div class="field">
+        <label>Телефон</label>
+        <input type="text" id="editPhone">
+      </div>
+      <div class="field">
+        <label>Адрес доставки</label>
+        <input type="text" id="editAddress">
+      </div>
+      <div class="field full">
+        <label>Комментарий</label>
+        <textarea id="editComment" rows="2"></textarea>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn cancel" onclick="closeModal('editModal')">Отмена</button>
+        <button type="submit" class="btn">Сохранить</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+    <!-- Уведомление -->
+  <div id="toast" class="toast hidden"></div>
+
+  <!-- Модальное окно подтверждения удаления -->
+<div id="deleteModal" class="modal hidden">
+  <div class="modal-content small">
+    <h3>Удалить заказ?</h3>
+    <p id="deleteText">Вы уверены, что хотите удалить этот заказ?</p>
+    <div class="modal-actions">
+      <button class="btn cancel" onclick="closeModal('deleteModal')">Отмена</button>
+      <button class="btn danger" id="confirmDeleteBtn">Удалить</button>
+    </div>
+  </div>
+</div>
+
   <script src="js/order.js"></script>
 </body>
 </html>

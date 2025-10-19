@@ -604,12 +604,17 @@ main {
   background: #eef8ee;
 }
 
-.btn-view, .btn-delete {
+.btn-view, .btn-edit, .btn-delete {
   cursor: pointer;
   border: none;
   background: none;
   font-size: 18px;
   transition: 0.2s;
+}
+
+.btn-edit:hover {
+  color: #2a7d2e;
+  transform: scale(1.2);
 }
 
 .btn-view:hover {
@@ -642,7 +647,7 @@ main {
   background: #fff;
   padding: 30px;
   border-radius: 12px;
-  width: 420px;
+  width: 550px;
   max-height: 85vh;
   overflow-y: auto;
   position: relative;
@@ -718,4 +723,86 @@ main {
 
 .toast.error {
   background: #e53935;
+}
+
+/* Двухколоночный просмотр заказа */
+.kv { 
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 10px 20px;
+  margin-top: 10px;
+}
+.kv .k { 
+  font-weight: 700; 
+  color: #2b6e2f;
+}
+.kv .v { 
+  color: #333; 
+  word-break: break-word;
+}
+@media (max-width: 560px) {
+  .kv { grid-template-columns: 1fr; }
+}
+
+/* === Форма редактирования заказа === */
+.edit-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px 25px;
+  align-items: center;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+}
+
+.field.full {
+  grid-column: 1 / span 2;
+}
+
+label {
+  font-weight: 600;
+  color: #2a7d2e;
+  margin-bottom: 4px;
+}
+
+input, textarea, select {
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 15px;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+
+input:focus, textarea:focus, select:focus {
+  border-color: #2a7d2e;
+  box-shadow: 0 0 5px rgba(42,125,46,0.3);
+  outline: none;
+}
+
+.modal-content.wide {
+  width: 650px;
+  max-width: 95%;
+}
+
+.modal-actions {
+  grid-column: 1 / span 2;
+  text-align: center;
+  margin-top: 15px;
+}
+
+.modal-content.small {
+  width: 400px;
+  max-width: 90%;
+  text-align: center;
+}
+
+.btn.danger {
+  background-color: #d9534f;
+}
+
+.btn.danger:hover {
+  background-color: #c9302c;
 }
