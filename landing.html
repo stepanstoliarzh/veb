@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LunchBox — бизнес-ланчи с доставкой</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    background-color: #f8f9fa;
+  }
+
+  .hero {
+    background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
+                url('images/image.jpg') center/cover no-repeat;
+    color: white;
+    text-align: center;
+    padding: 160px 20px;
+    border-radius: 0 0 30px 30px;
+    animation: fadeIn 1.2s ease-in-out;
+  }
+
+  .hero h1 {
+    font-size: 52px;
+    font-weight: 800;
+    margin-bottom: 20px;
+    letter-spacing: 1px;
+  }
+
+  .hero p {
+    font-size: 20px;
+    opacity: 0.9;
+    margin-bottom: 35px;
+  }
+
+  .btn-main {
+    background: linear-gradient(90deg, #2a7d2e, #1e8f4d);
+    border: none;
+    padding: 14px 36px;
+    font-size: 18px;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+  }
+  .btn-main:hover {
+    background: linear-gradient(90deg, #23872e, #198b6a);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+  }
+
+  .feature-icon {
+    font-size: 48px;
+    color: #2a7d2e;
+    margin-bottom: 15px;
+    transition: transform 0.3s;
+  }
+  .feature-icon:hover {
+    transform: scale(1.2);
+  }
+
+  #features .border {
+    transition: all 0.3s ease;
+  }
+  #features .border:hover {
+    background: #e9f7ec;
+    transform: translateY(-8px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+  }
+
+  .cta-section {
+    background: #fffaec;
+    color: white;
+    text-align: center;
+    padding: 80px 20px;
+    border-radius: 20px;
+    margin: 70px auto;
+    width: 90%;
+    max-width: 1100px;
+    animation: slideUp 1.2s ease-in-out;
+  }
+
+  footer {
+    background: #000;
+    color: #ccc;
+    font-size: 14px;
+  }
+
+  .navbar-brand {
+  display: inline-flex;
+  align-items: center;
+  color: #198754 !important; 
+  border: 2px solid transparent;
+  border-radius: 8px;
+  padding: 4px 10px;
+  transition: 0.3s;
+}
+
+.navbar-brand:hover {
+  border-color: #198754; 
+  background-color: transparent !important; 
+  color: #198754 !important;
+}
+
+.navbar-brand img {
+  border-radius: 50%;
+}
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+
+  <!-- Навигация -->
+  <nav class="navbar navbar-expand-lg bg-white border-bottom shadow-sm sticky-top">
+    <div class="container">
+      <a class="navbar-brand fw-bold text-success" href="index.html">
+        <img src="images/logo.png" alt="Logo" width="40" class="me-2"> FreshLunch
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navMenu">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link text-success fw-semibold" href="#features">Преимущества</a></li>
+          <li class="nav-item"><a class="nav-link text-success fw-semibold" href="#cta">Заказ</a></li>
+          <li class="nav-item"><a class="nav-link text-success fw-semibold" href="#contact">Контакты</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <h1>LunchBox — вкусные бизнес-ланчи с доставкой</h1>
+    <p>Быстро, сытно и по доступной цене. Закажи обед прямо в офис!</p>
+  </section>
+
+  <section id="about" class="my-5">
+  <div class="container">
+    <h2 class="text-success fw-bold mb-4">О нашей компании</h2>
+    <p class="lead">
+      Компания <b>FreshLunch</b> специализируется на приготовлении и доставке вкусных, полезных и сбалансированных бизнес-ланчей в офисы Москвы. Мы понимаем, как важно питаться правильно даже в условиях плотного рабочего графика, поэтому создаём блюда, которые сочетают в себе свежесть, питательность и домашний вкус.
+    </p>
+    <p>
+      Каждый день наши повара готовят из отборных продуктов, закупаемых у проверенных поставщиков. Мы уделяем особое внимание не только качеству ингредиентов, но и разнообразию меню, чтобы обеды FreshLunch не надоедали и приносили удовольствие. В нашем каталоге — лёгкие супы, полезные салаты, горячие блюда, смузи и десерты, которые помогут восстановить энергию на весь день.
+    </p>
+    <p>
+      Мы гордимся своей быстрой и точной доставкой — в среднем за 30 минут, по всей Москве. Всё упаковано в экологичную и удобную тару, которая сохраняет вкус и свежесть блюд. Для корпоративных клиентов доступны индивидуальные меню, подписки и специальные предложения.
+    </p>
+    <p>
+      <b>FreshLunch</b> — это команда, которая заботится о вашем времени, здоровье и настроении. Мы стремимся, чтобы каждый обед был не просто приёмом пищи, а приятным моментом в вашем рабочем дне.
+    </p>
+  </div>
+</section>
+
+
+  <!-- Преимущества -->
+  <section id="features" class="container text-center my-5">
+    <h2 class="mb-4 text-success fw-bold">Почему выбирают нас</h2>
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="p-4 border rounded-4 shadow-sm h-100">
+          <div class="feature-icon">🚚</div>
+          <h5 class="fw-semibold">Быстрая доставка</h5>
+          <p>Доставляем обеды за 30 минут по всему городу.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="p-4 border rounded-4 shadow-sm h-100">
+          <div class="feature-icon">🥗</div>
+          <h5 class="fw-semibold">Свежие продукты</h5>
+          <p>Готовим только из качественных и свежих ингредиентов.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="p-4 border rounded-4 shadow-sm h-100">
+          <div class="feature-icon">📱</div>
+          <h5 class="fw-semibold">Удобный заказ</h5>
+          <p>Собери свой ланч за пару кликов на сайте.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section id="cta" class="cta-section">
+    <h2>Хочешь вкусный обед уже сегодня?</h2>
+    <a href="lunch.html" class="btn btn-success text-white fw-semibold px-4 py-2 mt-3 shadow">
+  Перейти к сборке ланча
+</a>
+  </section>
+
+  <!-- Контакты -->
+  <section id="contact" class="my-5">
+  <div class="container">
+    <div class="text-center mb-4">
+      <h2 class="text-success fw-bold">Свяжитесь с нами</h2>
+      <p class="text-muted">Есть вопросы или предложения? Напишите нам — ответим в ближайшее время.</p>
+    </div>
+
+    <form class="mx-auto" style="max-width: 600px;">
+      <div class="mb-3">
+        <label for="name" class="form-label fw-semibold">Имя</label>
+        <input type="text" class="form-control" id="name" placeholder="Введите ваше имя">
+      </div>
+      <div class="mb-3">
+        <label for="email" class="form-label fw-semibold">Email</label>
+        <input type="email" class="form-control" id="email" placeholder="Введите ваш email">
+      </div>
+      <div class="mb-3">
+        <label for="message" class="form-label fw-semibold">Сообщение</label>
+        <textarea id="message" rows="4" class="form-control" placeholder="Ваше сообщение..."></textarea>
+      </div>
+      <div class="form-check mb-4">
+        <input class="form-check-input" type="checkbox" id="consent">
+        <label class="form-check-label" for="consent">
+          Даю согласие на обработку персональных данных
+        </label>
+      </div>
+      <button type="submit" class="btn btn-main w-100">Отправить</button>
+    </form>
+
+  </div>
+</section>
+
+    <footer class="mt-5 text-center py-3 bg-black text-white">
+        <p>Телефон: <a href="tel:+74950001122">+7 (495) 000-11-22</a></p>
+        <p>Email: <a href="mailto:info@freshlunch.ru">info@freshlunch.ru</a></p>
+        <p>Адрес: Москва, ул. Здоровая, 15</p>
+        <p>© 2025 FreshLunch</p>
+    </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

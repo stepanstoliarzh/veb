@@ -806,3 +806,25 @@ input:focus, textarea:focus, select:focus {
 .btn.danger:hover {
   background-color: #c9302c;
 }
+
+.more-btn {
+  display: inline-block;
+  background-color: #2a7d2e;
+  color: white;
+  padding: 12px 25px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background-color 0.3s, transform 0.2s;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+.more-btn:hover {
+  background-color: #256c28;
+  transform: translateY(-2px);
+}
+
+.more-btn-container {
+  text-align: center;
+  margin: 20px 0;
+}
