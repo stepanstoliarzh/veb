@@ -996,3 +996,19 @@ a {
   font-size: 14px;
   margin-top: 8px;
 }
+
+/* Прокрутка таблицы в истории заказов */
+.orders-scroll {
+  max-height: 500px;      /* ограничиваем высоту области */
+  overflow-y: auto;       /* включаем вертикальный скролл */
+  border-radius: 10px;    /* чтобы края были плавные */
+}
+
+/* фиксируем заголовок таблицы при прокрутке */
+.orders-scroll thead th {
+  position: sticky;
+  top: 0;
+  background-color: #2a7d2e;
+  z-index: 5;
+}
+
