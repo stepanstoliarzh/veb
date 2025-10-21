@@ -580,6 +580,8 @@ main {
   border-collapse: collapse;
   word-wrap: break-word;
   table-layout: auto;
+  max-height: 500px;
+  overflow-y: auto;
 }
 
 .orders-table th {
