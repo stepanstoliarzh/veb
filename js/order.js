@@ -73,9 +73,15 @@ async function loadOrders() {
         <td>${order.total ? order.total + " ₽" : "—"}</td>
         <td>${timeText}</td>
         <td>
-          <button class="btn-view"  onclick="viewOrder('${order.id}')" title="Посмотреть">👁</button>
-          <button class="btn-edit"  onclick="editOrder('${order.id}')" title="Редактировать">🖉</button>
-          <button class="btn-delete" onclick="deleteOrder('${order.id}')" title="Удалить">🗑</button>
+          <button class="btn-view" onclick="viewOrder('${order.id}')" title="Посмотреть">
+          <i class="fa-solid fa-eye"></i>
+          </button>
+          <button class="btn-edit" onclick="editOrder('${order.id}')" title="Редактировать">
+          <i class="fa-solid fa-pen"></i>
+          </button>
+          <button class="btn-delete" onclick="deleteOrder('${order.id}')" title="Удалить">
+          <i class="fa-solid fa-trash"></i>
+          </button>
         </td>
       `;
       tableBody.appendChild(row);
